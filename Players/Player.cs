@@ -4,16 +4,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using System;
+using System.Linq;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] Komadai komadaiPrefab;
-
+    private GameObject parent;
     //カメラ情報
     private Camera camera_object;
     private RaycastHit hit;
     // List<int> komas = new List<int>();
-    int[] player_1 = new int[] { 1, 2, 2, 3, 4 };
+    int[] player_1 = new int[] { 2, 2, 2, 3, 4 };
     string[] test = new string[] {"1","2","3"};
 
     // 決定ぼたんを押したら,Game Masterに通知する
@@ -23,7 +23,7 @@ public class Player : MonoBehaviour
         //カメラ情報を取得
         camera_object = GameObject.Find("Main Camera").GetComponent<Camera>();
 
-        SetupKomadai();
+        SetupKomadai();//盤上から置く時はOK
  
         MasuStatusLog();
     }
@@ -35,45 +35,109 @@ public class Player : MonoBehaviour
        }
     }
 
+    //初期配置
     public void SetupKomadai()
     {
-        Instantiate(komadaiPrefab); //駒台
-    
-        Koma Ou = KomaGenerator.instance.Spawn(2);
-        Debug.Log("王が移動する");
-        Ou.transform.localPosition = new Vector3(1.5f, 1.5f, 0);
-        Ou.ClickAction = SelectKoma; //クリックされた時関数を呼ぶ
+        GameObject komadai = GameObject.Find("Komadai");
+        //自身の駒
+        for(int i=0;i<5;i++) {
+            Koma Fu = KomaGenerator.instance.Spawn(player_1[i]);
+            Fu.transform.parent = GameObject.Find("Komadai").transform;
+            Fu.tag = "Komadai";
+
+            Fu.transform.localPosition = new Vector3(0, 0.40f - 0.2f * i, 0);
+            Fu.ClickAction = SelectKoma; //クリックされた時関数を呼ぶ
+            // Debug.Log(Fu.transform.parent.gameObject.name);
+        }
+
+        //相手のコマ
+        Koma koma = KomaGenerator.instance.Spawn(-2);
+        // koma.tag = "Player";
+        koma.ClickAction = SelectKoma; //クリックされた時関数を呼ぶ
+        foreach (Masu obj in FindObjectsOfType<Masu>())
+        {
+            koma.transform.parent = obj.transform; 
+            break;
+        }
+        koma.transform.localPosition = new Vector3(0, 0, 0);
+        koma.transform.Rotate(0, 0, 180.0f);
     }
 
     //コマクリック時
     public void SelectKoma(Koma koma)
     {
+        GameObject parent = koma.transform.parent.gameObject;
+
+        resetMasuTag(koma);
+
         float x = (float)koma.transform.position.x;
         float y = (float)koma.transform.position.y;
+        int index_x = (int)((3.0+x) / 1.5f);
+        int index_y = (int)((3.0+y) / 1.5f);
+        Debug.Log("iti:"+koma.transform.position);
+        Debug.Log("コマ位置：" + "x:"+index_x +"y:"+ index_y + "コマ名前" + koma.name);
+        App.slot = koma;
 
-        Debug.Log("コマ位置：" + koma.transform.position + "コマ名前" + koma.name);
-        if(App.slot == null) {
-            App.slot = koma;
-            Debug.Log("スロット空 =>" + App.slot.name);
-        } else {
-            App.slot = null;
-
-            koma.transform.localPosition = new Vector3(0f, 0f, 0);
-            Debug.Log("スロット => 空");
+        //駒台からの移動
+        if (parent.name == "Komadai") {
+            //選択できるマスを表示する(0のステータスのマスを色を変化させる)
+            createSelectObj();
         }
-        
+        //盤上からの移動
+        else if(parent.name == "Masu") {
+            SelectObj(koma);
+        }
+
         MasuStatusLog();
     }
 
     //マスのステータス一覧
-    public void MasuStatusLog() {
-        int i = 1;
-        foreach(var masu in App.masu_array)
-        { 
-            string[] intArray = Array.ConvertAll(masu, s => {return s.ToString();});
-            Debug.Log(i+"行目"+string.Join(",", intArray)); 
-            i++;
-        }   
+    public static void MasuStatusLog() {
+        for(int i=0; i<App.MAX_Y;i++)
+        {
+            string[] intArray = Array.ConvertAll(App.masu_array[App.MAX_Y-i-1], s => {return s.ToString();});
+            Debug.Log((App.MAX_Y-i).ToString()+"行目"+string.Join(",", intArray)); 
+        }
+    }
+
+    //駒台から駒を
+    public void createSelectObj() {
+        // foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Masu"))
+        foreach (Masu obj in FindObjectsOfType<Masu>())
+        {
+            if (obj.MasuStatus == 0) {
+                obj.tag = "Select";
+                obj.GetComponent<SpriteRenderer>().color = App.Select_Color;
+            }
+        }
+    }
+
+    //選択をキャンセルする
+    public void resetMasuTag(Koma koma) {
+        foreach (Masu obj in FindObjectsOfType<Masu>())
+        {
+            obj.tag = "Masu";
+            obj.GetComponent<SpriteRenderer>().color = App.Masu_Color;
+        }
+    }
+
+    //マスから駒をクリック時
+    public void SelectObj(Koma koma) {
+        var koma_p = koma.transform.position;
+        // foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Masu"))
+        if(koma.number == 2) {
+            var select_p = new Vector3(koma_p.x, koma_p.y + 1.5f, koma_p.z);
+            Debug.Log("これは歩です"+(koma_p.x,koma_p.y + 1.5f,koma_p.z));
+            
+            foreach (Masu obj in FindObjectsOfType<Masu>())
+            {
+                // 上方向に１つ上のマスのみ指定する
+                if (obj.transform.position == select_p) {
+                   obj.tag = "Select";
+                   obj.GetComponent<SpriteRenderer>().color = App.Select_Color;
+                }
+            }
+        }
     }
 }
 // //初期動作

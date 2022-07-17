@@ -19,12 +19,6 @@ public class MasuGenerator : MonoBehaviour
         instance = this;
     }
 
-    // public void Start()
-    // {
-
-        
-    // }
-
     public void Spawn() 
     {
         for(int i=0; i<int_y; i++)
@@ -35,6 +29,7 @@ public class MasuGenerator : MonoBehaviour
                 float x = j - 4 / 2f;
                 masu.transform.localPosition = new Vector3(x * Masu.width, y *Masu.hight, 0);
                 masu.name = "Masu" + i.ToString()+ "_" + j.ToString();
+                masu.name = "Masu";
                 masu.Init(0);
                 masu.ClickAction = SelectMasu; //クリックされた時関数を呼ぶ
             }
@@ -45,17 +40,66 @@ public class MasuGenerator : MonoBehaviour
     {
         float x = (float)masu.transform.position.x;
         float y = (float)masu.transform.position.y;
-        Debug.Log("マスの名前" + masu.name + "y:" + y.ToString() + "x:" + x.ToString());
-        // App.masu_array[y][x] = 99;
-//0_0 = -3,-3
-        Debug.Log("コマ位置：" + masu.transform.position + "コマ名前" + masu.name);
-        //コマが選択されている時
-        if(App.slot != null) {
-            App.slot.transform.localPosition = new Vector3(x*1.0f, y*1.0f, 0);
+        int index_x = (int)((3.0+x) / 1.5f);
+        int index_y = (int)((3.0+y) / 1.5f);
+
+        Debug.Log("マスの名前" + masu.name + "y:" + index_y.ToString() + "x:" + index_x.ToString());
+
+        //コマが選択されている時 かつ　「選択可能マス」
+        if(App.slot != null && masu.tag == "Select") {
+            float koma_x = App.slot.transform.localPosition.x;
+            float koma_y = App.slot.transform.localPosition.y;
+            int koma_i_x = (int)((3.0 + koma_x) / 1.5f);
+            int koma_i_y = (int)((3.0 + koma_y) / 1.5f);
+
+            GameObject parent = App.slot.transform.parent.gameObject;
+             //駒台
+            if(parent.name == "Komadai") {
+                Debug.Log("駒台から");
+                 //盤上
+            } else {
+                Debug.Log("============================盤上から");
+                App.masu_array[koma_i_y][koma_i_x] = 0; //移動した後は0になる
+                
+                //相手の駒の判定
+                Koma enemmy_koma = GetChild(masu);
+                Debug.Log("選択マスの中身:"+enemmy_koma);
+                //駒有り　かつ　相手の駒の時
+                if(enemmy_koma != null &&  enemmy_koma.number < 0) {
+                    enemmy_koma.transform.parent = GameObject.Find("Komadai").transform;
+                    enemmy_koma.tag = "Komadai";
+                    int i = 6; //駒台の数によって置く位置を変更する
+                    enemmy_koma.transform.localPosition = new Vector3(0, 0.40f - 0.2f * i, 0);
+                    enemmy_koma.transform.Rotate(0, 0, 0);
+                }
+            
+            }
+            App.slot.transform.parent = masu.transform; //マスを親にする。
+            masu.MasuStatus = 2;//今だけ
+            masu.GetComponent<SpriteRenderer>().color = App.Masu_Color;
+
+            //色とタグを戻す
+            foreach (Masu obj in FindObjectsOfType<Masu>())
+            {
+                obj.tag = "Masu";
+                obj.GetComponent<SpriteRenderer>().color = App.Masu_Color;
+            }
+            App.masu_array[index_y][index_x] = App.slot.number;
+            App.slot.transform.localPosition = new Vector3(0, 0, 0);
             App.slot = null;
-            Debug.Log("スロット => 空");
+
+            Player.MasuStatusLog();
         }
     }
+
+    Koma GetChild(Masu obj) {
+	Transform children = obj.GetComponentInChildren<Transform>();
+	//子要素がいなければ終了
+	if (children.childCount == 0) {
+		return null;
+	}
+    return obj.transform.GetChild(0).gameObject.GetComponent<Koma>();
+}
 }
 
 // RuleController

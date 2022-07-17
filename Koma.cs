@@ -12,6 +12,10 @@ public class Koma : MonoBehaviour
     public TMP_Text text;
     public UnityAction<Koma> ClickAction;
 
+    void Start () {
+        
+    }
+
     public void Init(int number)
     {
         this.number = number;

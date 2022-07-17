@@ -7,8 +7,9 @@ using UnityEngine.Events;
 public class Masu : MonoBehaviour
 {
     public UnityAction<Masu> ClickAction;
-    public int status;
-    
+    public int MasuStatus;
+
+    // public static int status = 0;
     public static float hight = 1.5f;
     public static float width = 1.5f;
     // private void Start()
@@ -17,7 +18,7 @@ public class Masu : MonoBehaviour
     // }
         public void Init(int number)
     {
-        this.status = number;
+        this.MasuStatus = number;
     }
 
     public void OnClickThis()

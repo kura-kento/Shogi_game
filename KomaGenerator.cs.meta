@@ -3,7 +3,9 @@ guid: fa258bf0b56364b64bba5f225a93e651
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - komaPrefab: {fileID: 1746887119431042990, guid: bcd6de77946e8452cb72dfaa5d67bbf4, type: 3}
+  - OuPrefab: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
