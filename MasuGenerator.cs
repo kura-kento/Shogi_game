@@ -12,6 +12,7 @@ public class MasuGenerator : MonoBehaviour
     public static MasuGenerator instance;
     public static int int_y = 4;
     public static int int_x = 4;
+    public Player Player;
 
     private void Awake()
     {
@@ -58,20 +59,29 @@ public class MasuGenerator : MonoBehaviour
                 //駒有り　かつ　相手の駒の時
                 if(masu_koma != null &&  App.isEnemyKoma(masu_koma)) {
                     //駒を取った時の処理
-                    masu_koma.transform.parent = komadai_obj.transform;
+                    // masu_koma.tag = "Komadai";
+                    // masu_koma.number *= -1;//ステータスを自分のコマに
+                    // masu_koma.transform.parent = komadai_obj.transform;
+                    // int koma_count = komadai_obj.transform.childCount; //駒台の数によって置く位置を変更する
+                    // masu_koma.transform.localPosition = new Vector3(0, KomadaiVectorY(koma_count), 0);
+                    // masu_koma.transform.Rotate(0, 0, 180f);
+
                     masu_koma.tag = "Komadai";
                     masu_koma.number *= -1;//ステータスを自分のコマに
-                    int koma_count = komadai_obj.transform.childCount; //駒台の数によって置く位置を変更する
-                    masu_koma.transform.localPosition = new Vector3(0, KomadaiVectorY(koma_count), 0);
-                    masu_koma.transform.Rotate(0, 0, 180f);
+
+                    Koma new_koma = App.isTurePlayer1 ?
+                    Player.instance.CreateKoma(masu_koma.number):
+                    Player2.instance.CreateKoma(masu_koma.number);
+
+                    Destroy(masu_koma.transform.gameObject);
+                    new_koma.transform.parent = komadai_obj.transform;
+                    // int koma_count = komadai_obj.transform.childCount; //駒台の数によって置く位置を変更する
+                    // new_koma.transform.localPosition = new Vector3(0, KomadaiVectorY(koma_count), 0);
                 }
             
             }
             App.slot.transform.parent = masu.transform; //マスを親にする。
-            masu.MasuStatus = 2; //今だけ
-            masu.GetComponent<SpriteRenderer>().color = App.Masu_Color;
-
-            //使ったら駒台の位置を並び替える。TODO: コマ台の操作のみ
+            //使ったら駒台の位置を並び替える。
             var koma_children = komadai_obj.GetComponentsInChildren<Koma>();
             int i = 0;
             foreach(Koma koma_child in koma_children) {
@@ -88,6 +98,8 @@ public class MasuGenerator : MonoBehaviour
             TurnEnd();//ダーン終了の処理
         }
     }
+
+
 
     // Koma GetChild(Masu obj) {
     //     Transform children = obj.GetComponentInChildren<Transform>();

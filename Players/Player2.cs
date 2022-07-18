@@ -9,14 +9,19 @@ using System.Linq;
 public class Player2 : PlayerController
 {
     private GameObject parent;
-
+    public static Player2 instance;
     // List<int> komas = new List<int>();
     int[] player_2 = new int[] { -2, -2, -2, -3, -4 };
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     private void Start()
     {
         SetupKomadai();
-        GameMaster.MasuStatusLog();
+        // GameMaster.MasuStatusLog();
     }
 
     void Update()
@@ -43,21 +48,29 @@ public class Player2 : PlayerController
     //コマクリック時
     public void SelectKoma(Koma koma)
     {
+        GameMaster.ResetMasu();//リセット
         GameObject parent = koma.transform.parent.gameObject;
-
-        GameMaster.ResetMasu();
 
         App.slot = koma;
 
         //駒台からの移動
         if (parent.name == "Komadai2") {
             //選択できるマスを表示する(0のステータスのマスを色を変化させる)
-            CreateSelectObj();
+            CreateSelectObj(false);
         }
         //盤上からの移動
         else if(parent.name == "Masu") {
-            SelectObj(koma);
+            SelectObj(koma, false);
         }
+    }
+
+    public Koma CreateKoma(int status) {
+        Koma k = KomaGenerator.instance.Spawn(status);
+        k.transform.parent = GameObject.Find("Komadai2").transform;
+        k.tag = "Komadai";
+        k.ClickAction = SelectKoma; //クリックされた時関数を呼ぶ
+        k.transform.Rotate(0, 0, 180.0f);
+        return k;
     }
 
 

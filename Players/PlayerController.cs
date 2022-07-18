@@ -17,7 +17,9 @@ public class PlayerController : MonoBehaviour
     }
 
     //駒台から駒を
-    public void CreateSelectObj() {
+    public void CreateSelectObj(bool isFirstPlayer) {
+        Debug.Log(isFirstPlayer ? "先手" : "後手");
+        if (!isMyTurn(isFirstPlayer)) return; //ターンプレイヤーでない場合何もしない
         foreach (Masu obj in FindObjectsOfType<Masu>())
         {
             if (obj.transform.childCount == 0) { //駒が置いていない場合(マスの子要素にデータが無い場合)
@@ -27,10 +29,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    //マスから駒をクリック時
-    public void SelectObj(Koma koma) {
-        if (App.isTurePlayer1 && koma.number < 0) return;
-        Debug.Log(App.isTurePlayer1 ? "先手" : "後手");
+    //盤上から駒をクリック時
+    public void SelectObj(Koma koma, bool isFirstPlayer) {
+        if (!isMyTurn(isFirstPlayer)) return; //ターンプレイヤーでない場合何もしない
+        // if (App.isTurePlayer1 && koma.number < 0) return; //先手 かつ 駒が相手
+        
         var koma_p = koma.transform.position;
         //歩を押した時  
         if(Mathf.Abs(koma.number) == 2) {
@@ -50,5 +53,9 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+    }
+
+    public bool isMyTurn(bool isFirstPlayer) {
+        return App.isTurePlayer1 == isFirstPlayer;
     }
 }

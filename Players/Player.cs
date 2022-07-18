@@ -9,12 +9,20 @@ using System.Linq;
 public class Player : PlayerController
 {
     private GameObject parent;
+    public static Player instance;
     int[] player_1 = new int[] { 2, 2, 2, 3, 4 };
+
+    
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     private void Start()
     {
         SetupKomadai();
-        GameMaster.MasuStatusLog();
+        // GameMaster.MasuStatusLog();
     }
 
     void Update()
@@ -37,25 +45,32 @@ public class Player : PlayerController
         }
     }
 
-    //コマクリック時
+    //コマクリック時(自分が生成した)
     public void SelectKoma(Koma koma)
     {
-        GameObject parent = koma.transform.parent.gameObject;
-
-        GameMaster.ResetMasu();
+        GameMaster.ResetMasu();//リセット
+        GameObject parent = koma.transform.parent.gameObject;//駒の親要素を取得
 
         App.slot = koma;
+       Debug.Log(App.Turn.ToString() + parent.name);
 
         //駒台からの移動
-        Debug.Log(App.Turn.ToString() + parent.name);
         if (parent.name == "Komadai") {
             //選択できるマスを表示する(0のステータスのマスを色を変化させる)
-            CreateSelectObj();
+            CreateSelectObj(true);
         }
         //盤上からの移動
         else if(parent.name == "Masu") {
-            SelectObj(koma);
+            SelectObj(koma, true);
         }
+    }
+
+    public Koma CreateKoma(int status) {
+        Koma k = KomaGenerator.instance.Spawn(status);
+        k.transform.parent = GameObject.Find("Komadai").transform;
+        k.tag = "Komadai";
+        k.ClickAction = SelectKoma; //クリックされた時関数を呼ぶ
+        return k;
     }
 }
 // //初期動作
