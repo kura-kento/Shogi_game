@@ -19,12 +19,19 @@ public class Koma : MonoBehaviour
     public void Init(int number)
     {
         this.number = number;
+        int abs_number = Mathf.Abs(number);
 
-        if(Mathf.Abs(number) == 2)
+        switch(abs_number)
         {
-            text.text = "歩";
-        }else{
-            text.text = (number).ToString();
+            case 1: //変数が値Aのとき実行される
+                text.text = "玉";
+                break;
+            case 2:
+                text.text = "歩";
+                break;
+            default:
+                text.text = (number).ToString();
+                break;
         }
     }
 

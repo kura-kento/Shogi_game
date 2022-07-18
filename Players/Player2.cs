@@ -11,7 +11,7 @@ public class Player2 : PlayerController
     private GameObject parent;
     public static Player2 instance;
     // List<int> komas = new List<int>();
-    int[] player_2 = new int[] { -2, -2, -2, -3, -4 };
+    int[] player_2 = new int[] { -2, -2, -2, -3, -1 };
 
     private void Awake()
     {

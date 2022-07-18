@@ -18,18 +18,19 @@ public class KomaGenerator : MonoBehaviour
 
     public Koma Spawn(int number) 
     {
-        if(number == 1)
-        {
-            Koma Ou = Instantiate(OuPrefab);
-            Ou.Init(number);
-            return Ou;
-        }
-        else
-        {
-            Koma koma = Instantiate(komaPrefab);
-            koma.Init(number);
-            return koma;
-        }
+        Koma koma = Instantiate(komaPrefab);
+        koma.Init(number);
+        return koma;
+        // if(number == 1)
+        // {
+        //     Koma Ou = Instantiate(OuPrefab);
+        //     Ou.Init(number);
+        //     return Ou;
+        // }
+        // else
+        // {
+        
+        // }
     }
 }
 
