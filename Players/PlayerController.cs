@@ -16,23 +16,14 @@ public class PlayerController : MonoBehaviour
         
     }
 
-        //駒台から駒を
-    public void createSelectObj() {
+    //駒台から駒を
+    public void CreateSelectObj() {
         foreach (Masu obj in FindObjectsOfType<Masu>())
         {
-            if (obj.MasuStatus == 0) { //駒が置いていない場合
-                obj.tag = "Select";
-                obj.GetComponent<SpriteRenderer>().color = App.Select_Color;
+            if (obj.transform.childCount == 0) { //駒が置いていない場合(マスの子要素にデータが無い場合)
+                //マスを選択できる状態にする
+                GameMaster.SelectMasu(obj);
             }
-        }
-    }
-
-    //選択をキャンセルする
-    public void resetMasuTag(Koma koma) {
-        foreach (Masu obj in FindObjectsOfType<Masu>())
-        {
-            obj.tag = "Masu";
-            obj.GetComponent<SpriteRenderer>().color = App.Masu_Color;
         }
     }
 
@@ -54,12 +45,10 @@ public class PlayerController : MonoBehaviour
                 if(masu_koma == null || (App.isTurePlayer1 &&  masu_koma.number < 0) || (App.isTurePlayer1 == false && masu_koma.number > 0)) {
                     // 上方向に１つ上のマスのみ指定する
                     if (obj.transform.position == select_p) {
-                        obj.tag = "Select";
-                        obj.GetComponent<SpriteRenderer>().color = App.Select_Color;
+                        GameMaster.SelectMasu(obj); //マスを選択できる状態にする
                     }
                 }
             }
         }
     }
-
 }

@@ -45,27 +45,19 @@ public class Player2 : PlayerController
     {
         GameObject parent = koma.transform.parent.gameObject;
 
-        resetMasuTag(koma);
+        GameMaster.ResetMasu();
 
-        float x = (float)koma.transform.position.x;
-        float y = (float)koma.transform.position.y;
-        int index_x = (int)((3.0+x) / 1.5f);
-        int index_y = (int)((3.0+y) / 1.5f);
-        Debug.Log("iti:"+koma.transform.position);
-        Debug.Log("コマ位置：" + "x:"+index_x +"y:"+ index_y + "コマ名前" + koma.name);
         App.slot = koma;
 
         //駒台からの移動
         if (parent.name == "Komadai2") {
             //選択できるマスを表示する(0のステータスのマスを色を変化させる)
-            createSelectObj();
+            CreateSelectObj();
         }
         //盤上からの移動
         else if(parent.name == "Masu") {
             SelectObj(koma);
         }
-
-        GameMaster.MasuStatusLog();
     }
 
 

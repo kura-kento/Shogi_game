@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using System;
+using TMPro;
 
 public class App : MonoBehaviour
 {
@@ -11,17 +12,23 @@ public class App : MonoBehaviour
     public static Koma slot = null;
     public static int MAX_Y = 4;
     public static int MAX_X = 4;
+   
 
     public static bool isTurePlayer1 = true;
     public static int Turn = 1;
 
-    public static Color32 Select_Color = new Color32(248, 168, 146, 255);
+    public static Color32 Select_Color = new Color32(248, 168, 146, 200);
     public static Color32 Masu_Color   = new Color32(212, 187, 99, 255);
     // int int_x = 4;
-
+    [SerializeField] private GameObject TurnText;
+    public static GameObject TurnObject;
 
     void Awake(){
-        for(int i=0; i<App.MAX_Y; i++) { masu_array[i] = new int[] {0,0,0,0};}  
+        for(int i=0; i<App.MAX_Y; i++) { masu_array[i] = new int[] {0,0,0,0};} 
+        TurnObject = TurnText;
+    }
+
+    void Start() {
     }
 
     //マスに置いているコマの情報を取得する。
@@ -46,6 +53,13 @@ public class App : MonoBehaviour
         }
         return false;
     }
+
+    //手数を表示させる(更新)
+    public static void turnUp() {
+        TMP_Text Turn_Text = TurnObject.GetComponent<TMP_Text>();
+        Turn_Text.SetText((App.isTurePlayer1 ? "先手" : "後手") + Turn.ToString());
+    }
+  
 
 //色を変える
 //obj.GetComponent<SpriteRenderer>().color = App.Masu_Color;

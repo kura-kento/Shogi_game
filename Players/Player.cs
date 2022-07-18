@@ -8,14 +8,8 @@ using System.Linq;
 //先攻プレーヤー
 public class Player : PlayerController
 {
-
     private GameObject parent;
-
-    // List<int> komas = new List<int>();
     int[] player_1 = new int[] { 2, 2, 2, 3, 4 };
-    // string[] test = new string[] {"1","2","3"};
-
-    // 決定ぼたんを押したら,Game Masterに通知する
 
     private void Start()
     {
@@ -41,18 +35,6 @@ public class Player : PlayerController
             Fu.transform.localPosition = new Vector3(0, 0.40f - 0.1f * i, 0);
             Fu.ClickAction = SelectKoma; //クリックされた時関数を呼ぶ
         }
-
-        // //相手のコマ
-        // Koma koma = KomaGenerator.instance.Spawn(-2);
-        // // koma.tag = "Player";
-        // koma.ClickAction = SelectKoma; //クリックされた時関数を呼ぶ
-        // foreach (Masu obj in FindObjectsOfType<Masu>())
-        // {
-        //     koma.transform.parent = obj.transform; 
-        //     break;
-        // }
-        // koma.transform.localPosition = new Vector3(0, 0, 0);
-        // koma.transform.Rotate(0, 0, 180.0f);
     }
 
     //コマクリック時
@@ -60,76 +42,21 @@ public class Player : PlayerController
     {
         GameObject parent = koma.transform.parent.gameObject;
 
-        resetMasuTag(koma);
+        GameMaster.ResetMasu();
 
-        float x = (float)koma.transform.position.x;
-        float y = (float)koma.transform.position.y;
-        int index_x = (int)((3.0+x) / 1.5f);
-        int index_y = (int)((3.0+y) / 1.5f);
-        Debug.Log("iti:"+koma.transform.position);
-        Debug.Log("コマ位置：" + "x:"+index_x +"y:"+ index_y + "コマ名前" + koma.name);
         App.slot = koma;
 
         //駒台からの移動
+        Debug.Log(App.Turn.ToString() + parent.name);
         if (parent.name == "Komadai") {
             //選択できるマスを表示する(0のステータスのマスを色を変化させる)
-            createSelectObj();
+            CreateSelectObj();
         }
         //盤上からの移動
         else if(parent.name == "Masu") {
             SelectObj(koma);
         }
-
-        GameMaster.MasuStatusLog();
     }
-
-
-
-    // //駒台から駒を
-    // public void createSelectObj() {
-    //     // foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Masu"))
-    //     foreach (Masu obj in FindObjectsOfType<Masu>())
-    //     {
-    //         if (obj.MasuStatus == 0) {
-    //             obj.tag = "Select";
-    //             obj.GetComponent<SpriteRenderer>().color = App.Select_Color;
-    //         }
-    //     }
-    // }
-
-    // //選択をキャンセルする
-    // public void resetMasuTag(Koma koma) {
-    //     foreach (Masu obj in FindObjectsOfType<Masu>())
-    //     {
-    //         obj.tag = "Masu";
-    //         obj.GetComponent<SpriteRenderer>().color = App.Masu_Color;
-    //     }
-    // }
-
-    // //マスから駒をクリック時
-    // public void SelectObj(Koma koma) {
-    //     var koma_p = koma.transform.position;
-    //     //歩を押した時       
-    //     if(koma.number == 2) {
-    //         var select_p = new Vector3(koma_p.x, koma_p.y + 1.5f, koma_p.z);
-    //         Debug.Log("これは歩です"+(koma_p.x,koma_p.y + 1.5f,koma_p.z));
-            
-    //         foreach (Masu obj in FindObjectsOfType<Masu>())
-    //         {
-    //             Koma masu_koma = App.GetChildKoma(obj);
-    //             if(masu_koma != null && masu_koma.number > 0) {
-
-    //             } else {
-    //                 // 上方向に１つ上のマスのみ指定する
-    //                 if (obj.transform.position == select_p) {
-    //                 obj.tag = "Select";
-    //                 obj.GetComponent<SpriteRenderer>().color = App.Select_Color;
-    //                 }
-    //             }
-
-    //         }
-    //     }
-    // }
 }
 // //初期動作
 // //4*4 で行う外周を99で配置する enam positionning,+自分で追加

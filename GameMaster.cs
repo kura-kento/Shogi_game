@@ -32,4 +32,27 @@ public class GameMaster : MonoBehaviour
             Debug.Log((App.MAX_Y-i).ToString()+"行目"+string.Join(",", intArray)); 
         }
     }
+
+    //全てのマスの選択をキャンセルする
+    public static void ResetMasu() {
+        foreach (Masu masu in FindObjectsOfType<Masu>())
+        {
+            masu.tag = "Masu";
+            masu.GetComponent<SpriteRenderer>().color = App.Masu_Color;
+            masu.GetComponent<Renderer>().sortingLayerName = "back++";
+        }
+    }
+    //マスを選択させる
+    public static void SelectMasu(Masu masu) {
+        masu.tag = "Select";
+        masu.GetComponent<SpriteRenderer>().color = App.Select_Color;
+        masu.GetComponent<Renderer>().sortingLayerName = "front++"; 
+    }
+
+    //駒台の順番 
+    // public static void KomadaiSetPosition(Masu masu) {
+    //     masu.tag = "Select";
+    //     masu.GetComponent<SpriteRenderer>().color = App.Select_Color;
+    //     masu.GetComponent<Renderer>().sortingLayerName = "front++"; 
+    // }
 }

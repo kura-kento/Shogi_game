@@ -38,19 +38,8 @@ public class MasuGenerator : MonoBehaviour
 
     public void SelectMasu(Masu masu)
     {
-        float x = (float)masu.transform.position.x;
-        float y = (float)masu.transform.position.y;
-        int index_x = (int)((3.0+x) / 1.5f);
-        int index_y = (int)((3.0+y) / 1.5f);
-
-        Debug.Log("マスの名前" + masu.name + "y:" + index_y.ToString() + "x:" + index_x.ToString());
-
         //コマが選択されている時 かつ　「選択可能マス」
         if(App.slot != null && masu.tag == "Select") {
-            float koma_x = App.slot.transform.localPosition.x;
-            float koma_y = App.slot.transform.localPosition.y;
-            int koma_i_x = (int)((3.0 + koma_x) / 1.5f);
-            int koma_i_y = (int)((3.0 + koma_y) / 1.5f);
 
             GameObject parent = App.slot.transform.parent.gameObject;
 
@@ -59,28 +48,21 @@ public class MasuGenerator : MonoBehaviour
              //駒台
             if(parent.name == "Komadai") {
                 Debug.Log("駒台から");
-                //使ったら駒台の位置を並び替える。
-                // Transform koma_children = komadai_obj.GetComponentInChildren<Transform>();
-                // int i=0;
-                // foreach(Koma koma_child in koma_children) {
-                //     koma_child.transform.localPosition = new Vector3(0, -0.40f + 0.1f * i, 0);
-                //     koma_child.transform.Rotate(0, 0, App.isTurePlayer1 ? 0 : 180.0f);
-                //     i++;
-                // }
+
                 //盤上
             } else {
                 Debug.Log("盤上から");
-                App.masu_array[koma_i_y][koma_i_x] = 0; //移動した後は0になる
                 
                 //選択したマスの駒情報 取得
                 Koma masu_koma = App.GetChildKoma(masu);
                 //駒有り　かつ　相手の駒の時
                 if(masu_koma != null &&  App.isEnemyKoma(masu_koma)) {
+                    //駒を取った時の処理
                     masu_koma.transform.parent = komadai_obj.transform;
                     masu_koma.tag = "Komadai";
-                    int i = komadai_obj.transform.childCount; //駒台の数によって置く位置を変更する
-                    float add_position = App.isTurePlayer1 ? -0.1f : 0.1f;
-                    masu_koma.transform.localPosition = new Vector3(0, 0.40f + add_position * i, 0);
+                    masu_koma.number *= -1;//ステータスを自分のコマに
+                    int koma_count = komadai_obj.transform.childCount; //駒台の数によって置く位置を変更する
+                    masu_koma.transform.localPosition = new Vector3(0, KomadaiVectorY(koma_count), 0);
                     masu_koma.transform.Rotate(0, 0, 180f);
                 }
             
@@ -89,19 +71,21 @@ public class MasuGenerator : MonoBehaviour
             masu.MasuStatus = 2; //今だけ
             masu.GetComponent<SpriteRenderer>().color = App.Masu_Color;
 
-            //色とタグを戻す
-            foreach (Masu obj in FindObjectsOfType<Masu>())
-            {
-                obj.tag = "Masu";
-                obj.GetComponent<SpriteRenderer>().color = App.Masu_Color;
+            //使ったら駒台の位置を並び替える。TODO: コマ台の操作のみ
+            var koma_children = komadai_obj.GetComponentsInChildren<Koma>();
+            int i = 0;
+            foreach(Koma koma_child in koma_children) {
+                koma_child.transform.localPosition = new Vector3(0, KomadaiVectorY(i), 0);
+                i++;
             }
-            App.masu_array[index_y][index_x] = App.slot.number;
+
+            //マスの状態をリセットする
+            GameMaster.ResetMasu();
+ 
             App.slot.transform.localPosition = new Vector3(0, 0, 0);
             App.slot = null;
 
-            App.isTurePlayer1 = !(App.isTurePlayer1);
-            App.Turn++; //ターン数増やす
-            GameMaster.MasuStatusLog();
+            TurnEnd();//ダーン終了の処理
         }
     }
 
@@ -113,6 +97,17 @@ public class MasuGenerator : MonoBehaviour
     //     }
     //     return obj.transform.GetChild(0).gameObject.GetComponent<Koma>();
     // }
+    //駒台の座標
+    public float KomadaiVectorY(int i) {
+        return App.isTurePlayer1 ? 0.40f -0.1f*i : -0.4f + 0.1f*i;
+    }
+
+    //ダーン終了の処理
+    public void TurnEnd() {
+        App.isTurePlayer1 = !(App.isTurePlayer1);
+        App.Turn++; //ターン数増やす
+        App.turnUp();
+    }
 }
 
 // RuleController
