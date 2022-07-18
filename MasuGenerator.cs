@@ -53,29 +53,40 @@ public class MasuGenerator : MonoBehaviour
             int koma_i_y = (int)((3.0 + koma_y) / 1.5f);
 
             GameObject parent = App.slot.transform.parent.gameObject;
+
+            string komadai_name = App.isTurePlayer1 ? "Komadai" : "Komadai2";
+            GameObject komadai_obj = GameObject.Find(komadai_name);
              //駒台
             if(parent.name == "Komadai") {
                 Debug.Log("駒台から");
-                 //盤上
+                //使ったら駒台の位置を並び替える。
+                // Transform koma_children = komadai_obj.GetComponentInChildren<Transform>();
+                // int i=0;
+                // foreach(Koma koma_child in koma_children) {
+                //     koma_child.transform.localPosition = new Vector3(0, -0.40f + 0.1f * i, 0);
+                //     koma_child.transform.Rotate(0, 0, App.isTurePlayer1 ? 0 : 180.0f);
+                //     i++;
+                // }
+                //盤上
             } else {
-                Debug.Log("============================盤上から");
+                Debug.Log("盤上から");
                 App.masu_array[koma_i_y][koma_i_x] = 0; //移動した後は0になる
                 
-                //相手の駒の判定
-                Koma enemmy_koma = GetChild(masu);
-                Debug.Log("選択マスの中身:"+enemmy_koma);
+                //選択したマスの駒情報 取得
+                Koma masu_koma = App.GetChildKoma(masu);
                 //駒有り　かつ　相手の駒の時
-                if(enemmy_koma != null &&  enemmy_koma.number < 0) {
-                    enemmy_koma.transform.parent = GameObject.Find("Komadai").transform;
-                    enemmy_koma.tag = "Komadai";
-                    int i = 6; //駒台の数によって置く位置を変更する
-                    enemmy_koma.transform.localPosition = new Vector3(0, 0.40f - 0.2f * i, 0);
-                    enemmy_koma.transform.Rotate(0, 0, 0);
+                if(masu_koma != null &&  App.isEnemyKoma(masu_koma)) {
+                    masu_koma.transform.parent = komadai_obj.transform;
+                    masu_koma.tag = "Komadai";
+                    int i = komadai_obj.transform.childCount; //駒台の数によって置く位置を変更する
+                    float add_position = App.isTurePlayer1 ? -0.1f : 0.1f;
+                    masu_koma.transform.localPosition = new Vector3(0, 0.40f + add_position * i, 0);
+                    masu_koma.transform.Rotate(0, 0, 180f);
                 }
             
             }
             App.slot.transform.parent = masu.transform; //マスを親にする。
-            masu.MasuStatus = 2;//今だけ
+            masu.MasuStatus = 2; //今だけ
             masu.GetComponent<SpriteRenderer>().color = App.Masu_Color;
 
             //色とタグを戻す
@@ -88,18 +99,20 @@ public class MasuGenerator : MonoBehaviour
             App.slot.transform.localPosition = new Vector3(0, 0, 0);
             App.slot = null;
 
-            Player.MasuStatusLog();
+            App.isTurePlayer1 = !(App.isTurePlayer1);
+            App.Turn++; //ターン数増やす
+            GameMaster.MasuStatusLog();
         }
     }
 
-    Koma GetChild(Masu obj) {
-	Transform children = obj.GetComponentInChildren<Transform>();
-	//子要素がいなければ終了
-	if (children.childCount == 0) {
-		return null;
-	}
-    return obj.transform.GetChild(0).gameObject.GetComponent<Koma>();
-}
+    // Koma GetChild(Masu obj) {
+    //     Transform children = obj.GetComponentInChildren<Transform>();
+    //     //子要素がいなければ終了
+    //     if (children.childCount == 0) {
+    //         return null;
+    //     }
+    //     return obj.transform.GetChild(0).gameObject.GetComponent<Koma>();
+    // }
 }
 
 // RuleController

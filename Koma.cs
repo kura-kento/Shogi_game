@@ -19,7 +19,8 @@ public class Koma : MonoBehaviour
     public void Init(int number)
     {
         this.number = number;
-        if(number == 2)
+
+        if(Mathf.Abs(number) == 2)
         {
             text.text = "歩";
         }else{
