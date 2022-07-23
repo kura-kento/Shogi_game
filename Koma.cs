@@ -35,6 +35,12 @@ public class Koma : MonoBehaviour
             case 4:
                 text.text = "桂";
                 break;
+            case 7:
+                text.text = "飛";
+                break;
+            case 8:
+                text.text = "角";
+                break;
             default:
                 text.text = (number).ToString();
                 break;

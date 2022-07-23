@@ -10,7 +10,7 @@ public class Player : PlayerController
 {
     private GameObject parent;
     public static Player instance;
-    int[] player_1 = new int[] { 2, 2, 3, 4, 1 };
+    int[] player_1 = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
     private void Awake()
     {

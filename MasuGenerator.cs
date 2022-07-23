@@ -41,19 +41,25 @@ public class MasuGenerator : MonoBehaviour
 
 
 
-        for(int i=0; i<int_y; i++)
-        {
+        for(int i=0; i<int_y; i++) {
             for(int j=0; j<int_x; j++) {
+                
+                Masu masu = Instantiate(masuPrefab);
+                float y = 2.5f - (1.0f * i);//6枚
+                float x = 2.5f - (1.0f * j);//6枚
+                masu.transform.localPosition = new Vector3(x * Masu.width, y *Masu.hight, 0);
+                // masu.name = "Masu" + i.ToString()+ "_" + j.ToString();
+                masu.name = "Masu";
                 if (masu_init[i,j] == 1 ) {
-                    Masu masu = Instantiate(masuPrefab);
-                    float y = 2.5f - (1.0f * i);//6枚
-                    float x = 2.5f - (1.0f * j);//6枚
-                    masu.transform.localPosition = new Vector3(x * Masu.width, y *Masu.hight, 0);
-                    // masu.name = "Masu" + i.ToString()+ "_" + j.ToString();
-                    masu.name = "Masu";
                     masu.Init(0);
                     masu.ClickAction = SelectMasu; //クリックされた時関数を呼ぶ
+                } else {
+                    masu.Init(1);//使用でき無いマス
+                    masu.tag = "NoUse";
+                    masu.GetComponent<SpriteRenderer>().color = App.No_Use_Color;
+                    masu.GetComponent<Renderer>().sortingLayerName = "front++"; 
                 }
+
             }
         }
     }

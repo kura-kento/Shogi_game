@@ -29,10 +29,8 @@ public class Masu : MonoBehaviour
     }
 
 
-    // // Update is called once per frame
-    // void Update()
-    // {
-        
-    // }
-
+    //使用不可パネルの場合
+    public static bool isNoUseMasu(Masu masu) {
+        return masu.tag == "NoUse";
+    }
 }

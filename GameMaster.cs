@@ -37,6 +37,8 @@ public class GameMaster : MonoBehaviour
     public static void ResetMasu() {
         foreach (Masu masu in FindObjectsOfType<Masu>())
         {
+            if(Masu.isNoUseMasu(masu)) continue;
+
             masu.tag = "Masu";
             masu.GetComponent<SpriteRenderer>().color = App.Masu_Color;
             masu.GetComponent<Renderer>().sortingLayerName = "back++";

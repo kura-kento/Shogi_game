@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
     Vector3 select_7 = new Vector3(-1.0f, -1.0f, 0);
     Vector3 select_8 = new Vector3(    0, -1.0f, 0);
     Vector3 select_9 = new Vector3( 1.0f, -1.0f, 0);
-
+    bool isEnd = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -33,6 +33,8 @@ public class PlayerController : MonoBehaviour
         if (!isMyTurn(isFirstPlayer)) return; //ターンプレイヤーでない場合何もしない
         foreach (Masu obj in FindObjectsOfType<Masu>())
         {
+            if(Masu.isNoUseMasu(obj)) continue;
+
             if (obj.transform.childCount == 0) { //駒が置いていない場合(マスの子要素にデータが無い場合)
                 //マスを選択できる状態にする
                 GameMaster.SelectMasu(obj);
@@ -52,7 +54,7 @@ public class PlayerController : MonoBehaviour
                 SelectMasuCheck(new Vector3[] { select_fu });
                 break;
             case 3: //香車
-                bool isEnd = false;
+                isEnd = false;
                 Vector3 select_kyo = koma_p + (koma.number > 0 ? select_2 : App.ReverseVector(select_2));
                 for (int i=0; i<10; i++)
                 {
@@ -62,7 +64,7 @@ public class PlayerController : MonoBehaviour
                 }
                 break;
 
-                case 4: //桂馬
+            case 4: //桂馬
                 Vector3 select_left  = new Vector3(-1.0f, 2.0f, 0);
                 Vector3 select_right = new Vector3( 1.0f, 2.0f, 0);
 
@@ -72,10 +74,10 @@ public class PlayerController : MonoBehaviour
                 foreach (Masu obj in FindObjectsOfType<Masu>())
                 {
                     Koma masu_koma = App.GetChildKoma(obj);
-                    // 駒が無い　または　(先攻+マイナス駒　または　後攻+プラス駒)
-                    if(masu_koma == null || (App.isTurePlayer1 &&  masu_koma.number < 0) || (App.isTurePlayer1 == false && masu_koma.number > 0)) {
-                        // 上方向に１つ上のマスのみ指定する
-                        if (obj.transform.position == select_ke_left || obj.transform.position == select_ke_right) {
+                    if (obj.transform.position == select_ke_left || obj.transform.position == select_ke_right) {
+
+                        // 駒が無い　または　(先攻+マイナス駒　または　後攻+プラス駒)
+                        else if(!Masu.isNoUseMasu(obj) && (masu_koma == null || (App.isTurePlayer1 &&  masu_koma.number < 0) || (App.isTurePlayer1 == false && masu_koma.number > 0))) {
                             GameMaster.SelectMasu(obj); //マスを選択できる状態にする
                         }
                     }
@@ -101,6 +103,70 @@ public class PlayerController : MonoBehaviour
             //         }
             //     }
             //     break;
+            case 7: //飛車
+                isEnd = false;
+                Vector3 select_hi_top    = koma_p + (koma.number > 0 ? select_2 : App.ReverseVector(select_2));
+                Vector3 select_hi_bottom = koma_p + (koma.number > 0 ? select_8 : App.ReverseVector(select_8));
+                Vector3 select_hi_left   = koma_p + (koma.number > 0 ? select_4 : App.ReverseVector(select_4));
+                Vector3 select_hi_right  = koma_p + (koma.number > 0 ? select_6 : App.ReverseVector(select_6));
+                
+                for (int i=0; i<10; i++)
+                {
+                    isEnd = SelectMasuCheck(new Vector3[] { select_hi_top });
+                    if(isEnd == true) break;
+                    select_hi_top += (koma.number > 0 ? select_2 : App.ReverseVector(select_2));
+                }
+                for (int i=0; i<10; i++)
+                {
+                    isEnd = SelectMasuCheck(new Vector3[] { select_hi_bottom });
+                    if(isEnd == true) break;
+                    select_hi_bottom += (koma.number > 0 ? select_8 : App.ReverseVector(select_8));
+                }
+                for (int i=0; i<10; i++)
+                {
+                    isEnd = SelectMasuCheck(new Vector3[] { select_hi_left });
+                    if(isEnd == true) break;
+                    select_hi_left += (koma.number > 0 ? select_4 : App.ReverseVector(select_4));
+                }
+                for (int i=0; i<10; i++)
+                {
+                    isEnd = SelectMasuCheck(new Vector3[] { select_hi_right });
+                    if(isEnd == true) break;
+                    select_hi_right += (koma.number > 0 ? select_6 : App.ReverseVector(select_6));
+                }
+                break;
+            case 8: //角
+                isEnd = false;
+                Vector3 select_hi_top_left     = koma_p + (koma.number > 0 ? select_1 : App.ReverseVector(select_1));
+                Vector3 select_hi_top_right    = koma_p + (koma.number > 0 ? select_3 : App.ReverseVector(select_3));
+                Vector3 select_hi_bottom_left  = koma_p + (koma.number > 0 ? select_7 : App.ReverseVector(select_7));
+                Vector3 select_hi_bottom_right = koma_p + (koma.number > 0 ? select_9 : App.ReverseVector(select_9));
+                
+                for (int i=0; i<10; i++)
+                {
+                    isEnd = SelectMasuCheck(new Vector3[] { select_hi_top_left });
+                    if(isEnd == true) break;
+                    select_hi_top_left += (koma.number > 0 ? select_1 : App.ReverseVector(select_1));
+                }
+                for (int i=0; i<10; i++)
+                {
+                    isEnd = SelectMasuCheck(new Vector3[] { select_hi_top_right });
+                    if(isEnd == true) break;
+                    select_hi_top_right += (koma.number > 0 ? select_3 : App.ReverseVector(select_3));
+                }
+                for (int i=0; i<10; i++)
+                {
+                    isEnd = SelectMasuCheck(new Vector3[] { select_hi_bottom_left });
+                    if(isEnd == true) break;
+                    select_hi_bottom_left += (koma.number > 0 ? select_7 : App.ReverseVector(select_7));
+                }
+                for (int i=0; i<10; i++)
+                {
+                    isEnd = SelectMasuCheck(new Vector3[] { select_hi_bottom_right });
+                    if(isEnd == true) break;
+                    select_hi_bottom_right += (koma.number > 0 ? select_9 : App.ReverseVector(select_9));
+                }
+                break;
         }
 
     }
@@ -116,30 +182,30 @@ public class PlayerController : MonoBehaviour
         {
             // セットした座標か？
             if (Array.IndexOf(selectArray, obj.transform.position) >= 0) {
+                
                 Koma masu_koma = App.GetChildKoma(obj);
                 // 駒が無い
-                if(masu_koma == null) {
+                if(Masu.isNoUseMasu(obj)) {
+                    isEnd = true; //処理を止める
+                }
+                else if(masu_koma == null) {
                     GameMaster.SelectMasu(obj); //マスを選択できる状態にする
-                    isEnd = false; //相手の駒の場合
-                    Debug.Log("駒が無い");
+                    isEnd = false;
                 }
                 // 相手の駒
                 else if((App.isTurePlayer1 &&  masu_koma.number < 0) || (App.isTurePlayer1 == false && masu_koma.number > 0)){
                     GameMaster.SelectMasu(obj); //マスを選択できる状態にする
                     isEnd = true; //処理を止める
-                    Debug.Log("相手の駒");
                 }
                 // 自分の駒
                 else if((App.isTurePlayer1 &&  masu_koma.number > 0) || (App.isTurePlayer1 == false && masu_koma.number < 0)){
                     isEnd = true; //処理を止める
-                    Debug.Log("自分の駒");
                 }
                 else{
                     throw new System.Exception("例外発生");
                 }
             }
         }
-        Debug.Log("isEnd:"+ (isEnd ? "True":"False"));
         return isEnd;
     }
 }

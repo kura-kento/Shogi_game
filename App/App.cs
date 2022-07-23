@@ -19,6 +19,8 @@ public class App : MonoBehaviour
 
     public static Color32 Select_Color = new Color32(248, 168, 146, 200);
     public static Color32 Masu_Color   = new Color32(212, 187, 99, 255);
+    public static Color32 No_Use_Color = new Color32(0, 0, 0, 255);
+    
     // int int_x = 4;
     [SerializeField] private GameObject TurnText;
     public static GameObject TurnObject;
