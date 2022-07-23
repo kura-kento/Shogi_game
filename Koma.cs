@@ -43,7 +43,7 @@ public class Koma : MonoBehaviour
 
     public void OnClickThis()
     {
-        Debug.Log("Komaが押されたよ！");
+        // Debug.Log("Komaが押されたよ！");
         // PalyerのSelectCardを実行　//外部に(player.cs)設定しているcard.ClickActionの処理を呼び出す？渡す？
         ClickAction.Invoke(this);
     }

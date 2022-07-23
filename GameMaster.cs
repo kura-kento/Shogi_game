@@ -29,7 +29,7 @@ public class GameMaster : MonoBehaviour
         for(int i=0; i<App.MAX_Y;i++)
         {
             string[] intArray = Array.ConvertAll(App.masu_array[App.MAX_Y-i-1], s => {return s.ToString();});
-            Debug.Log((App.MAX_Y-i).ToString()+"行目"+string.Join(",", intArray)); 
+            // Debug.Log((App.MAX_Y-i).ToString()+"行目"+string.Join(",", intArray)); 
         }
     }
 

@@ -10,7 +10,7 @@ public class Player : PlayerController
 {
     private GameObject parent;
     public static Player instance;
-    int[] player_1 = new int[] { 2, 2, 4, 4, 1 };
+    int[] player_1 = new int[] { 2, 2, 3, 4, 1 };
 
     private void Awake()
     {
@@ -50,7 +50,7 @@ public class Player : PlayerController
         GameObject parent = koma.transform.parent.gameObject;//駒の親要素を取得
 
         App.slot = koma;
-       Debug.Log(App.Turn.ToString() + parent.name);
+    //    Debug.Log(App.Turn.ToString() + parent.name);
 
         //駒台からの移動
         if (parent.name == "Komadai") {

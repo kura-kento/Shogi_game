@@ -69,11 +69,11 @@ public class MasuGenerator : MonoBehaviour
             GameObject komadai_obj = GameObject.Find(komadai_name);
              //駒台
             if(parent.name == "Komadai") {
-                Debug.Log("駒台から");
+                // Debug.Log("駒台から");
 
                 //盤上
             } else {
-                Debug.Log("盤上から");
+                // Debug.Log("盤上から");
                 
                 //選択したマスの駒情報 取得
                 Koma masu_koma = App.GetChildKoma(masu);
