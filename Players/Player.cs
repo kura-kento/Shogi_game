@@ -10,7 +10,7 @@ public class Player : PlayerController
 {
     private GameObject parent;
     public static Player instance;
-    int[] player_1 = new int[] { 2, 2, 2, 3, 1 };
+    int[] player_1 = new int[] { 2, 2, 4, 4, 1 };
 
     private void Awake()
     {
@@ -38,7 +38,7 @@ public class Player : PlayerController
             Fu.transform.parent = GameObject.Find("Komadai").transform;
             Fu.tag = "Komadai";
 
-            Fu.transform.localPosition = new Vector3(0, 0.40f - 0.1f * i, 0);
+            Fu.transform.localPosition = new Vector3(0.40f - 0.2f * i, 0, 0);
             Fu.ClickAction = SelectKoma; //クリックされた時関数を呼ぶ
         }
     }

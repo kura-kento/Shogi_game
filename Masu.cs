@@ -10,8 +10,8 @@ public class Masu : MonoBehaviour
     public int MasuStatus;
 
     // public static int status = 0;
-    public static float hight = 1.5f;
-    public static float width = 1.5f;
+    public static float hight = 1.0f;
+    public static float width = 1.0f;
     // private void Start()
     // {
     //     Init(99);

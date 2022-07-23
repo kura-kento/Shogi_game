@@ -59,6 +59,11 @@ public class App : MonoBehaviour
         TMP_Text Turn_Text = TurnObject.GetComponent<TMP_Text>();
         Turn_Text.SetText((App.isTurePlayer1 ? "先手" : "後手") + Turn.ToString());
     }
+
+    //向きを反転する。
+    public static Vector3 ReverseVector(Vector3 vector3) {
+        return new Vector3(-(vector3.x), -(vector3.y), vector3.z);
+    }
   
 
 //色を変える

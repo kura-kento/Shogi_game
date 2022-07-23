@@ -8,29 +8,52 @@ public class MasuGenerator : MonoBehaviour
 
     // どこからでも使えるようにする
     public static MasuGenerator instance;
-    public static int int_y = 4;
-    public static int int_x = 4;
+    public static int int_y = 6;
+    public static int int_x = 6;
     public Player Player;
+    
+
+    // masu_init[0] = new int[]{0,1,1,1,1,0};
+    //     {0,1,0,0,1,0},
+    //     {0,1,1,1,1,0},
+    //     {1,1,1,1,1,1},
+    //     {1,1,0,0,1,1},
+    //     {0,0,0,0,0,0},
 
     private void Awake()
     {
+
         Spawn();
         instance = this;
     }
 
     public void Spawn() 
     {
+  
+    int[,] masu_init = new int[6, 6]{
+        {0,1,1,1,1,0},
+        {0,1,0,0,1,0},
+        {0,1,1,1,1,0},
+        {1,1,1,1,1,1},
+        {1,1,0,0,1,1},
+        {0,0,0,0,0,0},
+    };
+
+
+
         for(int i=0; i<int_y; i++)
         {
             for(int j=0; j<int_x; j++) {
-                Masu masu = Instantiate(masuPrefab);
-                float y = i - 4 / 2f;
-                float x = j - 4 / 2f;
-                masu.transform.localPosition = new Vector3(x * Masu.width, y *Masu.hight, 0);
-                // masu.name = "Masu" + i.ToString()+ "_" + j.ToString();
-                masu.name = "Masu";
-                masu.Init(0);
-                masu.ClickAction = SelectMasu; //クリックされた時関数を呼ぶ
+                if (masu_init[i,j] == 1 ) {
+                    Masu masu = Instantiate(masuPrefab);
+                    float y = 2.5f - (1.0f * i);//6枚
+                    float x = 2.5f - (1.0f * j);//6枚
+                    masu.transform.localPosition = new Vector3(x * Masu.width, y *Masu.hight, 0);
+                    // masu.name = "Masu" + i.ToString()+ "_" + j.ToString();
+                    masu.name = "Masu";
+                    masu.Init(0);
+                    masu.ClickAction = SelectMasu; //クリックされた時関数を呼ぶ
+                }
             }
         }
     }
@@ -73,7 +96,7 @@ public class MasuGenerator : MonoBehaviour
             var koma_children = komadai_obj.GetComponentsInChildren<Koma>();
             int i = 0;
             foreach(Koma koma_child in koma_children) {
-                koma_child.transform.localPosition = new Vector3(0, KomadaiVectorY(i), 0);
+                koma_child.transform.localPosition = new Vector3(KomadaiVectorX(i), 0, 0);
                 i++;
             }
             //マスの状態をリセットする
@@ -92,8 +115,8 @@ public class MasuGenerator : MonoBehaviour
     }
 
     //駒台の座標
-    public float KomadaiVectorY(int i) {
-        return App.isTurePlayer1 ? 0.40f -0.1f*i : -0.4f + 0.1f*i;
+    public float KomadaiVectorX(int i) {
+        return App.isTurePlayer1 ? 0.40f - 0.2f * i : -0.40f + 0.2f * i;
     }
 
     //ダーン終了の処理
