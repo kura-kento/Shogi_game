@@ -53,11 +53,9 @@ public class Player : PlayerController
             App.slot = null;
             return;
         }
-        
-        GameObject parent = koma.transform.parent.gameObject;//駒の親要素を取得
 
+        GameObject parent = koma.transform.parent.gameObject;//駒の親要素を取得
         App.slot = koma;
-    //    Debug.Log(App.Turn.ToString() + parent.name);
 
         //駒台からの移動
         if (parent.name == "Komadai") {

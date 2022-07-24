@@ -1,6 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using Cysharp.Threading.Tasks;
+
+
 
 public class MasuGenerator : MonoBehaviour
 {
@@ -22,7 +26,6 @@ public class MasuGenerator : MonoBehaviour
 
     private void Awake()
     {
-
         Spawn();
         instance = this;
     }
@@ -62,7 +65,7 @@ public class MasuGenerator : MonoBehaviour
                 // masu.name = "Masu" + i.ToString()+ "_" + j.ToString();
                 masu.name = "Masu";
                 if (masu1_init[i,j] == 1 ) {
-                    masu.Init(1);
+                    masu.Init(-1);
                     masu.ClickAction = SelectMasu; //クリックされた時関数を呼ぶ
                 } else {
                     masu.Init(99);//使用でき無いマス
@@ -84,7 +87,7 @@ public class MasuGenerator : MonoBehaviour
                 // masu.name = "Masu" + i.ToString()+ "_" + j.ToString();
                 masu.name = "Masu";
                 if (masu2_init[i,j] == 1 ) {
-                    masu.Init(-1);
+                    masu.Init(1);
                     masu.ClickAction = SelectMasu; //クリックされた時関数を呼ぶ
                 } else {
                     masu.Init(99);//使用でき無いマス
@@ -97,7 +100,7 @@ public class MasuGenerator : MonoBehaviour
         }
     }
 
-    public void SelectMasu(Masu masu)
+    public async void SelectMasu(Masu masu)
     {
         // コマが選択されている時
         if(App.slot != null) {
@@ -111,10 +114,23 @@ public class MasuGenerator : MonoBehaviour
                 string komadai_name = App.isTurePlayer1 ? "Komadai" : "Komadai2";
                 GameObject komadai_obj = GameObject.Find(komadai_name);
                 //駒台
-                if(parent.name == "Komadai") {      
+                if(parent.name == "Komadai" || parent.name == "Komadai2") {      
                 } 
                 //盤上
                 else {
+                    // 駒を成る
+                    // （相手のマスに入る または　相手のマスから出る）　かつ　成れる駒
+                    // マス ✖️ 駒 = マイナスなら相手のマス 　-1 * +1 = -1　または +1 * -1 = -1
+                    int[] evolutionBefore = new int[] {2,3,4,5,7,8};
+                    if(((masu.MasuStatus * App.slot.number) < 0 || (parent.GetComponent<Masu>().MasuStatus * App.slot.number) < 0) && Array.IndexOf(evolutionBefore, Mathf.Abs(App.slot.number)) >= 0 ) {
+                        //駒を成りますか？
+                        // MyDialog.Confirm("駒を成りますか？", Click_OK, Click_Cancel);
+                        AnimatedDialog.instance.Open();
+                        await TestUniTask();
+                        App.slot.number = (App.slot.number > 0 ? 1 : -1) * (9 + Array.IndexOf(evolutionBefore, Mathf.Abs(App.slot.number)));
+                        KomaGenerator.instance.TextChange(App.slot);
+                    }
+
                     //駒有り　かつ　相手の駒の時
                     if(masu_koma != null &&  App.isEnemyKoma(masu_koma)) {
                         //駒を取った時の処理
@@ -163,4 +179,14 @@ public class MasuGenerator : MonoBehaviour
         App.Turn++; //ターン数増やす
         App.turnUp();
     }
+
+    //ダイアログが押されるまで待つ
+    async UniTask TestUniTask()  
+    {
+        // 5フレーム待機
+        await UniTask.DelayFrame(60);
+        // FixedUpdateを5回分待機
+        await UniTask.DelayFrame(60, PlayerLoopTiming.FixedUpdate);
+    }
+
 }

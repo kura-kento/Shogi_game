@@ -21,16 +21,11 @@ public class KomaGenerator : MonoBehaviour
         Koma koma = Instantiate(komaPrefab);
         koma.Init(number);
         return koma;
-        // if(number == 1)
-        // {
-        //     Koma Ou = Instantiate(OuPrefab);
-        //     Ou.Init(number);
-        //     return Ou;
-        // }
-        // else
-        // {
-        
-        // }
+    }
+
+    public void TextChange(Koma koma) 
+    {
+        koma.Init(koma.number);
     }
 }
 

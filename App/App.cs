@@ -73,4 +73,7 @@ public class App : MonoBehaviour
 
 //objectからKomaに変換
 //obj.GetComponent<Koma>();
+
+//配列に当てはまっている
+//Array.IndexOf(evolutionList, App.slot.number) >= 0 
 }
