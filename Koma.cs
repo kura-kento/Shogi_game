@@ -35,11 +35,35 @@ public class Koma : MonoBehaviour
             case 4:
                 text.text = "桂";
                 break;
+            case 5:
+                text.text = "銀";
+                break;
+            case 6:
+                text.text = "金";
+                break;
             case 7:
                 text.text = "飛";
                 break;
             case 8:
                 text.text = "角";
+                break;
+            case 9:
+                text.text = "と";
+                break;
+            case 10:
+                text.text = "杏";//成香
+                break;
+            case 11:
+                text.text = "圭";//成桂
+                break;
+            case 12:
+                text.text = "全";//成銀
+                break;
+            case 13:
+                text.text = "龍";
+                break;
+            case 14:
+                text.text = "馬";
                 break;
             default:
                 text.text = (number).ToString();

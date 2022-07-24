@@ -11,7 +11,7 @@ public class Player2 : PlayerController
     private GameObject parent;
     public static Player2 instance;
     // List<int> komas = new List<int>();
-    int[] player_2 = new int[] { -2, -4, -8, -7, -1 };
+    int[] player_2 = new int[] { -6, -4, -8, -7, -1 };
 
     private void Awake()
     {
@@ -49,6 +49,13 @@ public class Player2 : PlayerController
     public void SelectKoma(Koma koma)
     {
         GameMaster.ResetMasu();//リセット
+
+        //同じ駒を押した時、キャンセルする。
+        if(App.slot == koma) {
+            App.slot = null;
+            return;
+        }
+        
         GameObject parent = koma.transform.parent.gameObject;
 
         App.slot = koma;
@@ -62,6 +69,8 @@ public class Player2 : PlayerController
         else if(parent.name == "Masu") {
             SelectObj(koma, false);
         }
+
+
     }
 
     public Koma CreateKoma(int status) {

@@ -49,6 +49,17 @@ public class PlayerController : MonoBehaviour
         var koma_p = koma.transform.position;
         //歩を押した時  
         switch(Mathf.Abs(koma.number)) {
+            case 1: //王
+                Vector3 select_ou_1 = koma_p + (koma.number > 0 ? select_1 : App.ReverseVector(select_1));
+                Vector3 select_ou_2 = koma_p + (koma.number > 0 ? select_2 : App.ReverseVector(select_2));
+                Vector3 select_ou_3 = koma_p + (koma.number > 0 ? select_3 : App.ReverseVector(select_3));
+                Vector3 select_ou_4 = koma_p + (koma.number > 0 ? select_4 : App.ReverseVector(select_4));
+                Vector3 select_ou_6 = koma_p + (koma.number > 0 ? select_6 : App.ReverseVector(select_6));
+                Vector3 select_ou_7 = koma_p + (koma.number > 0 ? select_7 : App.ReverseVector(select_7));
+                Vector3 select_ou_8 = koma_p + (koma.number > 0 ? select_8 : App.ReverseVector(select_8));
+                Vector3 select_ou_9 = koma_p + (koma.number > 0 ? select_9 : App.ReverseVector(select_9));
+                SelectMasuCheck(new Vector3[] { select_ou_1,select_ou_2,select_ou_3,select_ou_4,select_ou_6,select_ou_7,select_ou_8,select_ou_9 });
+                break;
             case 2: //歩
                 Vector3 select_fu = koma_p + (koma.number > 0 ? select_2 : App.ReverseVector(select_2));  
                 SelectMasuCheck(new Vector3[] { select_fu });
@@ -63,7 +74,6 @@ public class PlayerController : MonoBehaviour
                     select_kyo += (koma.number > 0 ? select_2 : App.ReverseVector(select_2));
                 }
                 break;
-
             case 4: //桂馬
                 Vector3 select_left  = new Vector3(-1.0f, 2.0f, 0);
                 Vector3 select_right = new Vector3( 1.0f, 2.0f, 0);
@@ -77,32 +87,36 @@ public class PlayerController : MonoBehaviour
                     if (obj.transform.position == select_ke_left || obj.transform.position == select_ke_right) {
 
                         // 駒が無い　または　(先攻+マイナス駒　または　後攻+プラス駒)
-                        else if(!Masu.isNoUseMasu(obj) && (masu_koma == null || (App.isTurePlayer1 &&  masu_koma.number < 0) || (App.isTurePlayer1 == false && masu_koma.number > 0))) {
+                        if(!Masu.isNoUseMasu(obj) && (masu_koma == null || (App.isTurePlayer1 &&  masu_koma.number < 0) || (App.isTurePlayer1 == false && masu_koma.number > 0))) {
                             GameMaster.SelectMasu(obj); //マスを選択できる状態にする
                         }
                     }
                 }
                 break;
 
-            //     case 5: //銀
-            //     select_1 = new Vector3(koma_p.x + interval*-1.0f, koma_p.y + interval*2.0f, koma_p.z);
-            //     select_2 = new Vector3(koma_p.x + interval*1.0f, koma_p.y + interval*2.0f, koma_p.z);
-            //     select_3 = new Vector3(koma_p.x + interval*1.0f, koma_p.y + interval*2.0f, koma_p.z);
-            //     select_7 = new Vector3(koma_p.x + interval*-1.0f, koma_p.y + interval*2.0f, koma_p.z);
-            //     select_9 = new Vector3(koma_p.x + interval*1.0f, koma_p.y + interval*2.0f, koma_p.z);
+            case 5: //銀
+                Vector3 select_gin_1 = koma_p + (koma.number > 0 ? select_1 : App.ReverseVector(select_1));  
+                Vector3 select_gin_2 = koma_p + (koma.number > 0 ? select_2 : App.ReverseVector(select_2));
+                Vector3 select_gin_3 = koma_p + (koma.number > 0 ? select_3 : App.ReverseVector(select_3));
+                Vector3 select_gin_7 = koma_p + (koma.number > 0 ? select_7 : App.ReverseVector(select_7));
+                Vector3 select_gin_9 = koma_p + (koma.number > 0 ? select_9 : App.ReverseVector(select_9));
+                SelectMasuCheck(new Vector3[] { select_gin_1,select_gin_2,select_gin_3,select_gin_7,select_gin_9});
+                break;
 
-            //     foreach (Masu obj in FindObjectsOfType<Masu>())
-            //     {
-            //         Koma masu_koma = App.GetChildKoma(obj);
-            //         // 駒が無い　または　(先攻+マイナス駒　または　後攻+プラス駒)
-            //         if(masu_koma == null || (App.isTurePlayer1 &&  masu_koma.number < 0) || (App.isTurePlayer1 == false && masu_koma.number > 0)) {
-            //             // 上方向に１つ上のマスのみ指定する
-            //             if (obj.transform.position == select_1) {
-            //                 GameMaster.SelectMasu(obj); //マスを選択できる状態にする
-            //             }
-            //         }
-            //     }
-            //     break;
+            case 6:  //金
+            case 9:  //と金
+            case 10: //香車金
+            case 11: //桂馬金
+            case 12: //銀金
+                Vector3 select_kin_1 = koma_p + (koma.number > 0 ? select_1 : App.ReverseVector(select_1));  
+                Vector3 select_kin_2 = koma_p + (koma.number > 0 ? select_2 : App.ReverseVector(select_2));
+                Vector3 select_kin_3 = koma_p + (koma.number > 0 ? select_3 : App.ReverseVector(select_3));
+                Vector3 select_kin_4 = koma_p + (koma.number > 0 ? select_4 : App.ReverseVector(select_4));
+                Vector3 select_kin_6 = koma_p + (koma.number > 0 ? select_6 : App.ReverseVector(select_6));
+                Vector3 select_kin_8 = koma_p + (koma.number > 0 ? select_8 : App.ReverseVector(select_8));
+                SelectMasuCheck(new Vector3[] { select_kin_1,select_kin_2,select_kin_3,select_kin_4,select_kin_6,select_kin_8 });
+                break;
+
             case 7: //飛車
                 isEnd = false;
                 Vector3 select_hi_top    = koma_p + (koma.number > 0 ? select_2 : App.ReverseVector(select_2));
@@ -165,6 +179,79 @@ public class PlayerController : MonoBehaviour
                     isEnd = SelectMasuCheck(new Vector3[] { select_hi_bottom_right });
                     if(isEnd == true) break;
                     select_hi_bottom_right += (koma.number > 0 ? select_9 : App.ReverseVector(select_9));
+                }
+                break;
+            case 13: //龍王
+                isEnd = false;
+                Vector3 select_ryu_top    = koma_p + (koma.number > 0 ? select_2 : App.ReverseVector(select_2));
+                Vector3 select_ryu_bottom = koma_p + (koma.number > 0 ? select_8 : App.ReverseVector(select_8));
+                Vector3 select_ryu_left   = koma_p + (koma.number > 0 ? select_4 : App.ReverseVector(select_4));
+                Vector3 select_ryu_right  = koma_p + (koma.number > 0 ? select_6 : App.ReverseVector(select_6));
+                Vector3 select_ryu_1 = koma_p + (koma.number > 0 ? select_1 : App.ReverseVector(select_1));  
+                Vector3 select_ryu_3 = koma_p + (koma.number > 0 ? select_3 : App.ReverseVector(select_3));
+                Vector3 select_ryu_7 = koma_p + (koma.number > 0 ? select_7 : App.ReverseVector(select_7));
+                Vector3 select_ryu_9 = koma_p + (koma.number > 0 ? select_9 : App.ReverseVector(select_9));
+
+                SelectMasuCheck(new Vector3[] { select_ryu_1,select_ryu_3,select_ryu_7,select_ryu_9 });
+                for (int i=0; i<10; i++)
+                {
+                    isEnd = SelectMasuCheck(new Vector3[] { select_ryu_top });
+                    if(isEnd == true) break;
+                    select_ryu_top += (koma.number > 0 ? select_2 : App.ReverseVector(select_2));
+                }
+                for (int i=0; i<10; i++)
+                {
+                    isEnd = SelectMasuCheck(new Vector3[] { select_ryu_bottom });
+                    if(isEnd == true) break;
+                    select_ryu_bottom += (koma.number > 0 ? select_8 : App.ReverseVector(select_8));
+                }
+                for (int i=0; i<10; i++)
+                {
+                    isEnd = SelectMasuCheck(new Vector3[] { select_ryu_left });
+                    if(isEnd == true) break;
+                    select_ryu_left += (koma.number > 0 ? select_4 : App.ReverseVector(select_4));
+                }
+                for (int i=0; i<10; i++)
+                {
+                    isEnd = SelectMasuCheck(new Vector3[] { select_ryu_right });
+                    if(isEnd == true) break;
+                    select_ryu_right += (koma.number > 0 ? select_6 : App.ReverseVector(select_6));
+                }
+                break;
+            case 14: //龍馬
+                isEnd = false;
+                Vector3 select_uma_top_left     = koma_p + (koma.number > 0 ? select_1 : App.ReverseVector(select_1));
+                Vector3 select_uma_top_right    = koma_p + (koma.number > 0 ? select_3 : App.ReverseVector(select_3));
+                Vector3 select_uma_bottom_left  = koma_p + (koma.number > 0 ? select_7 : App.ReverseVector(select_7));
+                Vector3 select_uma_bottom_right = koma_p + (koma.number > 0 ? select_9 : App.ReverseVector(select_9));
+                Vector3 select_uma_2 = koma_p + (koma.number > 0 ? select_2 : App.ReverseVector(select_2));
+                Vector3 select_uma_4 = koma_p + (koma.number > 0 ? select_4 : App.ReverseVector(select_4));
+                Vector3 select_uma_6 = koma_p + (koma.number > 0 ? select_6 : App.ReverseVector(select_6));
+                Vector3 select_uma_8 = koma_p + (koma.number > 0 ? select_8 : App.ReverseVector(select_8));
+                SelectMasuCheck(new Vector3[] { select_uma_2,select_uma_4,select_uma_6,select_uma_8 });
+                for (int i=0; i<10; i++)
+                {
+                    isEnd = SelectMasuCheck(new Vector3[] { select_uma_top_left });
+                    if(isEnd == true) break;
+                    select_uma_top_left += (koma.number > 0 ? select_1 : App.ReverseVector(select_1));
+                }
+                for (int i=0; i<10; i++)
+                {
+                    isEnd = SelectMasuCheck(new Vector3[] { select_uma_top_right });
+                    if(isEnd == true) break;
+                    select_uma_top_right += (koma.number > 0 ? select_3 : App.ReverseVector(select_3));
+                }
+                for (int i=0; i<10; i++)
+                {
+                    isEnd = SelectMasuCheck(new Vector3[] { select_uma_bottom_left });
+                    if(isEnd == true) break;
+                    select_uma_bottom_left += (koma.number > 0 ? select_7 : App.ReverseVector(select_7));
+                }
+                for (int i=0; i<10; i++)
+                {
+                    isEnd = SelectMasuCheck(new Vector3[] { select_uma_bottom_right });
+                    if(isEnd == true) break;
+                    select_uma_bottom_right += (koma.number > 0 ? select_9 : App.ReverseVector(select_9));
                 }
                 break;
         }

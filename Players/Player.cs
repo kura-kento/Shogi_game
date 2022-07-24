@@ -10,7 +10,7 @@ public class Player : PlayerController
 {
     private GameObject parent;
     public static Player instance;
-    int[] player_1 = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    int[] player_1 = new int[] { 6, 2, 3, 4, 5 };
 
     private void Awake()
     {
@@ -31,7 +31,7 @@ public class Player : PlayerController
     //初期配置
     public void SetupKomadai()
     {
-        GameObject komadai = GameObject.Find("Komadai");
+        // GameObject komadai = GameObject.Find("Komadai");
         //自身の駒
         for(int i=0;i<5;i++) {
             Koma Fu = KomaGenerator.instance.Spawn(player_1[i]);
@@ -47,6 +47,13 @@ public class Player : PlayerController
     public void SelectKoma(Koma koma)
     {
         GameMaster.ResetMasu();//リセット
+
+        //同じ駒を押した時、キャンセルする。
+        if(App.slot == koma) {
+            App.slot = null;
+            return;
+        }
+        
         GameObject parent = koma.transform.parent.gameObject;//駒の親要素を取得
 
         App.slot = koma;

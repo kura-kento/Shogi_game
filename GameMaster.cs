@@ -22,8 +22,6 @@ public class GameMaster : MonoBehaviour
         
     }
 
-
-
     //マスのステータス(ログ)
     public static void MasuStatusLog() {
         for(int i=0; i<App.MAX_Y;i++)
