@@ -25,6 +25,7 @@ public class AnimatedDialog : MonoBehaviour
 
     //インスタンス化
     public static AnimatedDialog instance;
+    public static bool IsClose;
     public bool IsEvolt; //駒を成るか？
     
     private void Awake()
@@ -37,7 +38,7 @@ public class AnimatedDialog : MonoBehaviour
     {
         // 不正操作防止
         if (IsOpen || IsTransition) return;
-
+        IsClose = false;
         // パネル自体をアクティブにする
         gameObject.SetActive(true);
 
@@ -50,11 +51,13 @@ public class AnimatedDialog : MonoBehaviour
 
     public void Evolt() {
         IsEvolt = true;
+        IsClose = true;
         Close();
     }
 
     public void NoEvolt() {
         IsEvolt = false;
+        IsClose = true;
         Close();
     }
     

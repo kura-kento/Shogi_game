@@ -127,6 +127,8 @@ public class MasuGenerator : MonoBehaviour
                         // MyDialog.Confirm("駒を成りますか？", Click_OK, Click_Cancel);
                         AnimatedDialog.instance.Open();
                         await TestUniTask();
+
+                        //TODO:不具合 インスタンスがない
                         App.slot.number = (App.slot.number > 0 ? 1 : -1) * (9 + Array.IndexOf(evolutionBefore, Mathf.Abs(App.slot.number)));
                         KomaGenerator.instance.TextChange(App.slot);
                     }
@@ -183,10 +185,8 @@ public class MasuGenerator : MonoBehaviour
     //ダイアログが押されるまで待つ
     async UniTask TestUniTask()  
     {
-        // 5フレーム待機
-        await UniTask.DelayFrame(60);
-        // FixedUpdateを5回分待機
-        await UniTask.DelayFrame(60, PlayerLoopTiming.FixedUpdate);
+        //ダイアログが閉じるまで処理を止める
+        await UniTask.WaitUntil(() => AnimatedDialog.IsClose);
     }
 
 }
