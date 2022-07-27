@@ -26,18 +26,26 @@ public class AnimatedDialog : MonoBehaviour
     //インスタンス化
     public static AnimatedDialog instance;
     public static bool IsClose;
-    public bool IsEvolt; //駒を成るか？
+    public static bool IsEvolt; //駒を成るか？
     
     private void Awake()
     {
         instance = this;
     }
 
+    void Start()
+    {
+        gameObject.SetActive(false);
+        // Close();
+    }
+
     // ダイアログを開く
     public void Open()
     {
+        
         // 不正操作防止
         if (IsOpen || IsTransition) return;
+        Debug.Log("ダイアログを開く");
         IsClose = false;
         // パネル自体をアクティブにする
         gameObject.SetActive(true);

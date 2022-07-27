@@ -41,13 +41,13 @@ public class MasuGenerator : MonoBehaviour
     //     {1,1,0,0,1,1},
     //     {0,0,0,0,0,0},
     // };
-    int[,] masu1_init = new int[3, 6]{
+    int[,] masu1_init = new int[3, 6] {
         {0,1,1,1,1,0},
         {0,1,0,0,1,0},
         {0,1,1,1,1,0},
     };
 
-    int[,] masu2_init = new int[3, 6]{
+    int[,] masu2_init = new int[3, 6] {
         {1,1,1,1,1,1},
         {1,1,0,0,1,1},
         {0,0,0,0,0,0},
@@ -102,6 +102,7 @@ public class MasuGenerator : MonoBehaviour
 
     public async void SelectMasu(Masu masu)
     {
+
         // コマが選択されている時
         if(App.slot != null) {
             //コマが選択されている時 かつ　「選択可能マス」
@@ -118,24 +119,24 @@ public class MasuGenerator : MonoBehaviour
                 } 
                 //盤上
                 else {
-                    // 駒を成る
+                    // 【駒を成る】
                     // （相手のマスに入る または　相手のマスから出る）　かつ　成れる駒
                     // マス ✖️ 駒 = マイナスなら相手のマス 　-1 * +1 = -1　または +1 * -1 = -1
                     int[] evolutionBefore = new int[] {2,3,4,5,7,8};
                     if(((masu.MasuStatus * App.slot.number) < 0 || (parent.GetComponent<Masu>().MasuStatus * App.slot.number) < 0) && Array.IndexOf(evolutionBefore, Mathf.Abs(App.slot.number)) >= 0 ) {
-                        //駒を成りますか？
+                        // 駒を成りますか？
                         // MyDialog.Confirm("駒を成りますか？", Click_OK, Click_Cancel);
                         AnimatedDialog.instance.Open();
                         await TestUniTask();
-
-                        //TODO:不具合 インスタンスがない
-                        App.slot.number = (App.slot.number > 0 ? 1 : -1) * (9 + Array.IndexOf(evolutionBefore, Mathf.Abs(App.slot.number)));
-                        KomaGenerator.instance.TextChange(App.slot);
+                        if (AnimatedDialog.IsEvolt) {
+                            //TODO:不具合 インスタンスがない
+                            App.slot.number = (App.slot.number > 0 ? 1 : -1) * (9 + Array.IndexOf(evolutionBefore, Mathf.Abs(App.slot.number)));
+                            KomaGenerator.instance.TextChange(App.slot);
+                        }
                     }
-
                     //駒有り　かつ　相手の駒の時
                     if(masu_koma != null &&  App.isEnemyKoma(masu_koma)) {
-                        //駒を取った時の処理
+                        //【駒を取った時の処理】
                         masu_koma.tag = "Komadai";
                         masu_koma.number *= -1;//ステータスを自分のコマに
 
@@ -160,11 +161,14 @@ public class MasuGenerator : MonoBehaviour
                 App.slot.transform.localPosition = new Vector3(0, 0, 0);
                 App.slot = null;
 
-                // TODO:ここに勝利判定を入れる
-                // 玉が取られる
-                // 全駒
-                // タッチダウン
-                TurnEnd();//ダーン終了の処理
+                //「BATTLE」の時
+                if(App.game_type == GAME_TYPE.BATTLE) {
+                    // TODO:ここに勝利判定を入れる
+                    // 玉が取られる
+                    // 全駒
+                    // タッチダウン
+                    TurnEnd();//ダーン終了の処理    
+                }
             }
         } 
 

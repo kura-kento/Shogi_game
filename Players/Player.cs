@@ -46,6 +46,8 @@ public class Player : PlayerController
     //コマクリック時(自分が生成した)
     public void SelectKoma(Koma koma)
     {
+
+        
         GameMaster.ResetMasu();//リセット
 
         //同じ駒を押した時、キャンセルする。
@@ -56,7 +58,12 @@ public class Player : PlayerController
 
         GameObject parent = koma.transform.parent.gameObject;//駒の親要素を取得
         App.slot = koma;
-
+        //「KOMA_SET」の時
+        if(App.game_type == GAME_TYPE.KOMA_SET) {
+            //全ての
+            CreateSelectObj(true);
+            return;
+        }
         //駒台からの移動
         if (parent.name == "Komadai") {
             //選択できるマスを表示する(0のステータスのマスを色を変化させる)

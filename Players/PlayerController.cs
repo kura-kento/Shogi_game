@@ -15,10 +15,11 @@ public class PlayerController : MonoBehaviour
     Vector3 select_8 = new Vector3(    0, -1.0f, 0);
     Vector3 select_9 = new Vector3( 1.0f, -1.0f, 0);
     bool isEnd = false;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -30,7 +31,7 @@ public class PlayerController : MonoBehaviour
     //駒台から駒を
     public void CreateSelectObj(bool isFirstPlayer) {
         // Debug.Log(isFirstPlayer ? "先手" : "後手");
-        if (!isMyTurn(isFirstPlayer)) return; //ターンプレイヤーでない場合何もしない
+        if (!isMyTurn(isFirstPlayer) && App.game_type == GAME_TYPE.BATTLE) return; //ターンプレイヤーでない場合何もしない
         foreach (Masu obj in FindObjectsOfType<Masu>())
         {
             if(Masu.isNoUseMasu(obj)) continue;
@@ -44,7 +45,7 @@ public class PlayerController : MonoBehaviour
 
     //盤上から駒をクリック時
     public void SelectObj(Koma koma, bool isFirstPlayer) {
-        if (!isMyTurn(isFirstPlayer)) return; //ターンプレイヤーでない場合何もしない
+        if (!isMyTurn(isFirstPlayer) && App.game_type == GAME_TYPE.BATTLE) return; //ターンプレイヤーでない場合何もしない
         // if (App.isTurePlayer1 && koma.number < 0) return; //先手 かつ 駒が相手
         var koma_p = koma.transform.position;
         //歩を押した時  

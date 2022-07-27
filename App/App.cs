@@ -6,17 +6,29 @@ using UnityEngine.Events;
 using System;
 using TMPro;
 
+// 場所
+public enum GAME_TYPE
+{
+    KOMA_SET,    // 並べる
+    BATTLE,  // 対戦中
+}
+ 
+
 public class App : MonoBehaviour
 {
+    public static GAME_TYPE game_type = GAME_TYPE.KOMA_SET;
+
     public static int[][] masu_array = new int[4][];
     public static Koma slot = null;
     public static int MAX_Y = 4;
     public static int MAX_X = 4;
    
 
+
     public static bool isTurePlayer1 = true;
     public static int Turn = 1;
 
+    //色
     public static Color32 Select_Color = new Color32(248, 168, 146, 200);
     public static Color32 Masu_Color   = new Color32(212, 187, 99, 255);
     public static Color32 No_Use_Color = new Color32(0, 0, 0, 255);
