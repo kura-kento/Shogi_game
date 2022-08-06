@@ -10,7 +10,7 @@ public class Player : PlayerController
 {
     private GameObject parent;
     public static Player instance;
-    int[] player_1 = new int[] { 6, 2, 3, 4, 5 };
+    int[] player_1 = new int[] { 1, 2, 3, 4, 5 };
 
     private void Awake()
     {
@@ -46,8 +46,6 @@ public class Player : PlayerController
     //コマクリック時(自分が生成した)
     public void SelectKoma(Koma koma)
     {
-
-        
         GameMaster.ResetMasu();//リセット
 
         //同じ駒を押した時、キャンセルする。
@@ -61,7 +59,7 @@ public class Player : PlayerController
         //「KOMA_SET」の時
         if(App.game_type == GAME_TYPE.KOMA_SET) {
             //全ての
-            CreateSelectObj(true);
+            mySelectObj(true);
             return;
         }
         //駒台からの移動

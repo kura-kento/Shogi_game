@@ -17,5 +17,14 @@ public class Button : MonoBehaviour
     public void OnClick()
     {
        App.game_type = GAME_TYPE.BATTLE;
+        Debug.Log("okoko");
+        int komaCount = 0;
+        foreach (Koma koma in FindObjectsOfType<Koma>()) {
+            Debug.Log(koma.number);
+            if(koma.number > 0) {
+                komaCount++;
+            }
+        }
+        Debug.Log("isEnemyZero" + komaCount);
     }
 }

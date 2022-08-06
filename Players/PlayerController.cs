@@ -28,6 +28,20 @@ public class PlayerController : MonoBehaviour
         
     }
 
+    //駒台から駒を【駒セット用】
+    public void mySelectObj(bool isFirstPlayer) {
+        if (App.game_type != GAME_TYPE.KOMA_SET) return; 
+        foreach (Masu obj in FindObjectsOfType<Masu>())
+        {
+            if(Masu.isNoUseMasu(obj)) continue;
+
+            if (obj.transform.childCount == 0 && obj.MasuStatus == (isFirstPlayer ? 1 : -1)) { //駒が置いていない場合(マスの子要素にデータが無い場合)
+                //マスを選択できる状態にする
+                GameMaster.SelectMasu(obj);
+            }
+        }
+    }
+
     //駒台から駒を
     public void CreateSelectObj(bool isFirstPlayer) {
         // Debug.Log(isFirstPlayer ? "先手" : "後手");

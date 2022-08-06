@@ -136,6 +136,9 @@ public class MasuGenerator : MonoBehaviour
                     }
                     //駒有り　かつ　相手の駒の時
                     if(masu_koma != null &&  App.isEnemyKoma(masu_koma)) {
+                        //【玉が取られた時】
+                        if(Mathf.Abs(masu_koma.number) == 1){ Win();}
+
                         //【駒を取った時の処理】
                         masu_koma.tag = "Komadai";
                         masu_koma.number *= -1;//ステータスを自分のコマに
@@ -146,6 +149,9 @@ public class MasuGenerator : MonoBehaviour
 
                         Destroy(masu_koma.transform.gameObject);
                         new_koma.transform.parent = komadai_obj.transform;
+
+                        //【全駒】判定
+                        if(isEnemyZero() == true){ Win();}
                     }
                 }
                 App.slot.transform.parent = masu.transform; //マスを親にする。
@@ -164,14 +170,27 @@ public class MasuGenerator : MonoBehaviour
                 //「BATTLE」の時
                 if(App.game_type == GAME_TYPE.BATTLE) {
                     // TODO:ここに勝利判定を入れる
-                    // 玉が取られる
-                    // 全駒
-                    // タッチダウン
                     TurnEnd();//ダーン終了の処理    
                 }
             }
         } 
 
+    }
+
+    public void Win() {
+        //勝ち判定
+        Debug.Log("かち");
+    }
+
+    public bool isEnemyZero() {
+        int komaCount = 0;
+        foreach (Koma koma in FindObjectsOfType<Koma>()) {
+            Debug.Log(koma.number);
+            if(koma.number > 0) {
+                komaCount++;
+            }
+        }
+        return (komaCount >= 9);
     }
 
     //駒台の座標
