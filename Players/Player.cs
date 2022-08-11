@@ -5,12 +5,16 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using System;
 using System.Linq;
+using Photon.Pun;
+using UnityEngine.EventSystems;
+using TMPro;
 //先攻プレーヤー
 public class Player : PlayerController
 {
     private GameObject parent;
     public static Player instance;
     int[] player_1 = new int[] { 1, 2, 3, 4, 5 };
+    int[] player_2 = new int[] { -6, -4, -8, -7, -1 };
 
     private void Awake()
     {
@@ -19,8 +23,35 @@ public class Player : PlayerController
 
     private void Start()
     {
-        SetupKomadai();
+        Debug.Log(PhotonNetwork.LocalPlayer);
+        SetupPhoton();
+        // SetupKomadai();
         // GameMaster.MasuStatusLog();
+    }
+
+    public void SetupPhoton() {
+        for(int i=0;i<5;i++) {
+            var obj = PhotonNetwork.Instantiate("Koma", new Vector3(0, 0, 0), Quaternion.identity, 0);
+            obj.AddComponent<Koma>();
+            Koma koma = obj.transform.gameObject.GetComponent<Koma>();
+            koma.number = player_1[i];
+            Transform children = obj.GetComponentInChildren<Transform>();
+            koma.text = obj.transform.GetChild(0).gameObject.GetComponent<TMP_Text>();;
+            KomaGenerator.instance.TextChange(koma);
+            EventTrigger trigger = obj.GetComponent<EventTrigger>();
+            EventTrigger.Entry entry = new EventTrigger.Entry();
+            entry.eventID = EventTriggerType.PointerDown;
+            entry.callback.AddListener((data) => { 
+                    Debug.Log("ボタンをクリックした");
+                    SelectKoma(koma);
+                });
+            trigger.triggers.Add(entry);
+
+            koma.transform.parent = GameObject.Find("Komadai").transform;
+            koma.tag = "Komadai";
+
+            koma.transform.localPosition = new Vector3(0.40f - 0.2f * i, 0, 0);
+        }
     }
 
     void Update()

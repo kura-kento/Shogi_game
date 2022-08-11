@@ -4,8 +4,9 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using Photon.Pun;
 
-public class Koma : MonoBehaviour
+public class Koma : MonoBehaviourPunCallbacks
 {
 
     public int number;

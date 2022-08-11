@@ -10,7 +10,7 @@ public class Button : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //  btn.GetComponent<Button>().interactable = false;
+        //  btn.Getnent<Button>().interactable = false;
     }
 
     // ボタンが押された場合、今回呼び出される関数

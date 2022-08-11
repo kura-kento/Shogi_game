@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Photon.Pun;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviourPunCallbacks
 {
     Vector3 select_1 = new Vector3(-1.0f,  1.0f, 0);
     Vector3 select_2 = new Vector3(    0,  1.0f, 0);

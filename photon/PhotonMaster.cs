@@ -55,11 +55,18 @@ public class PhotonMaster : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         Debug.Log("ルームに参加しました");
+        //ここに入った
+
+        // var gameObject = PhotonNetwork.Instantiate("Koma", new Vector3(0, 0, 0), Quaternion.identity, 0);
+
         int playerCount = PhotonNetwork.CurrentRoom.PlayerCount;
         if (playerCount != MaxPlayerPerRoom)
         {
             statusText.text = "対戦相手を待っています。";
-            PhotonNetwork.LoadLevel("SampleScene");
+
+                PhotonNetwork.CurrentRoom.IsOpen = false;
+                statusText.text = "対戦相手が揃いました。バトルシーンに移動します。";
+                PhotonNetwork.LoadLevel("BattleScene");
         }
         else
         {
@@ -67,17 +74,17 @@ public class PhotonMaster : MonoBehaviourPunCallbacks
         }
     }
 
+    //ルーム作成者の処理
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
-        Debug.Log("OnPlayerEnteredRoom");
+        Debug.Log("OnPlayerEnteredRoom:ルーム作成者に通知 部屋に入りました");
         if (PhotonNetwork.IsMasterClient)
         {
             if (PhotonNetwork.CurrentRoom.PlayerCount == MaxPlayerPerRoom)
             {
                 PhotonNetwork.CurrentRoom.IsOpen = false;
                 statusText.text = "対戦相手が揃いました。バトルシーンに移動します。";
-                // SceneManager.LoadScene ("SampleScene");
-                PhotonNetwork.LoadLevel("SampleScene");
+                PhotonNetwork.LoadLevel("BattleScene");
             }
         }
     }
