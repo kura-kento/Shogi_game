@@ -1,9 +1,10 @@
+using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-using Cysharp.Threading.Tasks;
-
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 
 public class MasuGenerator : MonoBehaviour
@@ -14,6 +15,7 @@ public class MasuGenerator : MonoBehaviour
     public static MasuGenerator instance;
     public static int int_y = 6;
     public static int int_x = 6;
+    
     public Player Player;
     
 
@@ -59,10 +61,14 @@ public class MasuGenerator : MonoBehaviour
             for(int j=0; j<int_x; j++) {
                 
                 Masu masu = Instantiate(masuPrefab);
-                float y = 2.5f - (1.0f * i);//6枚
-                float x = 2.5f - (1.0f * j);//6枚
+                masu.transform.parent = GameObject.Find("Shogiban").transform; //マスを親にする。
+                float y = (App.MASU_SIZE * 2.5f) - (App.MASU_SIZE * i);//6枚
+                float x = (App.MASU_SIZE * 2.5f) - (App.MASU_SIZE * j);//6枚
                 masu.transform.localPosition = new Vector3(x * Masu.width, y *Masu.hight, 0);
+                masu.transform.localScale = new Vector3(App.MASU_SIZE, App.MASU_SIZE, App.MASU_SIZE);
+                // masu.transform.localPosition
                 // masu.name = "Masu" + i.ToString()+ "_" + j.ToString();
+                
                 masu.name = "Masu";
                 if (masu1_init[i,j] == 1 ) {
                     masu.Init(-1);
@@ -70,7 +76,10 @@ public class MasuGenerator : MonoBehaviour
                 } else {
                     masu.Init(99);//使用でき無いマス
                     masu.tag = "NoUse";
-                    masu.GetComponent<SpriteRenderer>().color = App.No_Use_Color;
+                    masu.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 255);
+
+                    Sprite image = Resources.Load<Sprite>("Images/NoEntryMasu");
+                    masu.GetComponent<SpriteRenderer>().sprite = image;
                     masu.GetComponent<Renderer>().sortingLayerName = "front++"; 
                 }
 
@@ -78,13 +87,14 @@ public class MasuGenerator : MonoBehaviour
         }
 
         for(int i=0; i<3; i++) {
-            for(int j=0; j<int_x; j++) {
-                
+            for(int j=0; j<int_x; j++) {      
                 Masu masu = Instantiate(masuPrefab);
-                float y = 2.5f - (1.0f * i+3);//6枚
-                float x = 2.5f - (1.0f * j);//6枚
+                // masu.transform.parent = GameObject.Find("Shogiban").transform; //マスを親にする。
+                masu.transform.parent = GameObject.Find("Shogiban").transform; //マスを親にする。
+                float y = (App.MASU_SIZE * 2.5f) - (App.MASU_SIZE * (i+3));//6枚
+                float x = (App.MASU_SIZE * 2.5f) - (App.MASU_SIZE * j);//6枚
                 masu.transform.localPosition = new Vector3(x * Masu.width, y *Masu.hight, 0);
-                // masu.name = "Masu" + i.ToString()+ "_" + j.ToString();
+                masu.transform.localScale = new Vector3(App.MASU_SIZE, App.MASU_SIZE, App.MASU_SIZE);
                 masu.name = "Masu";
                 if (masu2_init[i,j] == 1 ) {
                     masu.Init(1);
@@ -92,7 +102,10 @@ public class MasuGenerator : MonoBehaviour
                 } else {
                     masu.Init(99);//使用でき無いマス
                     masu.tag = "NoUse";
-                    masu.GetComponent<SpriteRenderer>().color = App.No_Use_Color;
+                    masu.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 255);
+
+                    Sprite image = Resources.Load<Sprite>("Images/NoEntryMasu");
+                    masu.GetComponent<SpriteRenderer>().sprite = image;
                     masu.GetComponent<Renderer>().sortingLayerName = "front++"; 
                 }
 
@@ -112,10 +125,10 @@ public class MasuGenerator : MonoBehaviour
 
                 GameObject parent = App.slot.transform.parent.gameObject;
 
-                string komadai_name = App.isTurePlayer1 ? "Komadai" : "Komadai2";
+                string komadai_name = App.isTurePlayer1 ? "Komadai1" : "Komadai2";
                 GameObject komadai_obj = GameObject.Find(komadai_name);
                 //駒台
-                if(parent.name == "Komadai" || parent.name == "Komadai2") {      
+                if(parent.name == "Komadai1" || parent.name == "Komadai2") {      
                 } 
                 //盤上
                 else {
@@ -195,7 +208,7 @@ public class MasuGenerator : MonoBehaviour
 
     //駒台の座標
     public float KomadaiVectorX(int i) {
-        return App.isTurePlayer1 ? 0.40f - 0.2f * i : -0.40f + 0.2f * i;
+        return App.isTurePlayer1 ? (App.MASU_SIZE * 2.0f) - (App.MASU_SIZE * i) : -(App.MASU_SIZE * 2.0f) + (App.MASU_SIZE * i) * i;
     }
 
     //ダーン終了の処理

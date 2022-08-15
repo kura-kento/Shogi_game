@@ -6,15 +6,15 @@ using Photon.Pun;
 
 public class PlayerController : MonoBehaviourPunCallbacks
 {
-    Vector3 select_1 = new Vector3(-1.0f,  1.0f, 0);
-    Vector3 select_2 = new Vector3(    0,  1.0f, 0);
-    Vector3 select_3 = new Vector3( 1.0f,  1.0f, 0);
-    Vector3 select_4 = new Vector3( 1.0f,     0, 0);
+    Vector3 select_1 = new Vector3(App.MASU_SIZE * -1.0f,App.MASU_SIZE *  1.0f, 0);
+    Vector3 select_2 = new Vector3(    0,App.MASU_SIZE *  1.0f, 0);
+    Vector3 select_3 = new Vector3(App.MASU_SIZE * 1.0f, App.MASU_SIZE * 1.0f, 0);
+    Vector3 select_4 = new Vector3(App.MASU_SIZE * 1.0f,     0, 0);
     Vector3 select_5 = new Vector3(    0,     0, 0);
-    Vector3 select_6 = new Vector3(-1.0f,     0, 0);
-    Vector3 select_7 = new Vector3(-1.0f, -1.0f, 0);
-    Vector3 select_8 = new Vector3(    0, -1.0f, 0);
-    Vector3 select_9 = new Vector3( 1.0f, -1.0f, 0);
+    Vector3 select_6 = new Vector3(App.MASU_SIZE * -1.0f,     0, 0);
+    Vector3 select_7 = new Vector3(App.MASU_SIZE * -1.0f,App.MASU_SIZE * -1.0f, 0);
+    Vector3 select_8 = new Vector3(    0,App.MASU_SIZE * -1.0f, 0);
+    Vector3 select_9 = new Vector3(App.MASU_SIZE * 1.0f,App.MASU_SIZE * -1.0f, 0);
     bool isEnd = false;
 
     // Start is called before the first frame update
@@ -45,10 +45,13 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     //駒台から駒を
     public void CreateSelectObj(bool isFirstPlayer) {
-        // Debug.Log(isFirstPlayer ? "先手" : "後手");
+        Debug.Log(isFirstPlayer ? "駒台から駒を先手" : "駒台から駒を後手");
         if (!isMyTurn(isFirstPlayer) && App.game_type == GAME_TYPE.BATTLE) return; //ターンプレイヤーでない場合何もしない
+        
         foreach (Masu obj in FindObjectsOfType<Masu>())
         {
+            Debug.Log(obj.name);
+            Debug.Log(Masu.isNoUseMasu(obj));
             if(Masu.isNoUseMasu(obj)) continue;
 
             if (obj.transform.childCount == 0) { //駒が置いていない場合(マスの子要素にデータが無い場合)
@@ -60,9 +63,12 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     //盤上から駒をクリック時
     public void SelectObj(Koma koma, bool isFirstPlayer) {
+        // Debug.Log(isFirstPlayer ? "先手" : "後手");
         if (!isMyTurn(isFirstPlayer) && App.game_type == GAME_TYPE.BATTLE) return; //ターンプレイヤーでない場合何もしない
+        Debug.Log(isFirstPlayer ? "盤上から駒をクリック時:先手" : "盤上から駒をクリック時:後手");
         // if (App.isTurePlayer1 && koma.number < 0) return; //先手 かつ 駒が相手
-        var koma_p = koma.transform.position;
+        var koma_p = koma.transform.parent.transform.localPosition;
+        Debug.Log("マスの位置" + koma_p.y.ToString());
         //歩を押した時  
         switch(Mathf.Abs(koma.number)) {
             case 1: //王
@@ -78,9 +84,12 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 break;
             case 2: //歩
                 Vector3 select_fu = koma_p + (koma.number > 0 ? select_2 : App.ReverseVector(select_2));  
+                Debug.Log("歩の移動先の座標："+select_fu.ToString());
+                // Vector3 select_fu = new Vector3(-13.95f, -4.65f, 90.00f);
                 SelectMasuCheck(new Vector3[] { select_fu });
                 break;
             case 3: //香車
+                Debug.Log("香車");
                 isEnd = false;
                 Vector3 select_kyo = koma_p + (koma.number > 0 ? select_2 : App.ReverseVector(select_2));
                 for (int i=0; i<10; i++)
@@ -89,10 +98,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
                     if(isEnd == true) break;
                     select_kyo += (koma.number > 0 ? select_2 : App.ReverseVector(select_2));
                 }
+                Debug.Log(select_kyo);
                 break;
             case 4: //桂馬
-                Vector3 select_left  = new Vector3(-1.0f, 2.0f, 0);
-                Vector3 select_right = new Vector3( 1.0f, 2.0f, 0);
+                Vector3 select_left  = new Vector3(App.MASU_SIZE * -1.0f,App.MASU_SIZE * 2.0f, 0);
+                Vector3 select_right = new Vector3(App.MASU_SIZE * 1.0f,App.MASU_SIZE * 2.0f, 0);
 
                 Vector3 select_ke_left  = koma_p + (isFirstPlayer ? select_left  : App.ReverseVector(select_left));
                 Vector3 select_ke_right = koma_p + (isFirstPlayer ? select_right : App.ReverseVector(select_right));
@@ -100,7 +110,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 foreach (Masu obj in FindObjectsOfType<Masu>())
                 {
                     Koma masu_koma = App.GetChildKoma(obj);
-                    if (obj.transform.position == select_ke_left || obj.transform.position == select_ke_right) {
+                    if (obj.transform.localPosition == select_ke_left || obj.transform.localPosition == select_ke_right) {
 
                         // 駒が無い　または　(先攻+マイナス駒　または　後攻+プラス駒)
                         if(!Masu.isNoUseMasu(obj) && (masu_koma == null || (App.isTurePlayer1 &&  masu_koma.number < 0) || (App.isTurePlayer1 == false && masu_koma.number > 0))) {
@@ -271,7 +281,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 }
                 break;
         }
-
     }
 
     public bool isMyTurn(bool isFirstPlayer) {
@@ -281,10 +290,12 @@ public class PlayerController : MonoBehaviourPunCallbacks
     //条件に合うマスがあるか？　処理が完了したらtrueを返す
     public bool SelectMasuCheck(Vector3[] selectArray) {
         bool isEnd = false;
+        // Debug.Log("条件に合うマスがあるか？:SelectMasuCheck");
+        // Debug.Log(FindObjectsOfType<Masu>().Length);
         foreach (Masu obj in FindObjectsOfType<Masu>())
         {
             // セットした座標か？
-            if (Array.IndexOf(selectArray, obj.transform.position) >= 0) {
+            if (Array.IndexOf(selectArray, obj.transform.localPosition) >= 0) {
                 
                 Koma masu_koma = App.GetChildKoma(obj);
                 // 駒が無い

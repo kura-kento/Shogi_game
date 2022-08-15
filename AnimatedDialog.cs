@@ -60,6 +60,7 @@ public class AnimatedDialog : MonoBehaviour
     public void Evolt() {
         IsEvolt = true;
         IsClose = true;
+        Debug.Log("ダイアログ:OK");
         Close();
     }
 

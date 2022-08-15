@@ -23,7 +23,7 @@ public class App : MonoBehaviour
     public static int MAX_Y = 4;
     public static int MAX_X = 4;
    
-
+    public static float MASU_SIZE = 275f;
 
     public static bool isTurePlayer1 = true;
     public static int Turn = 1;

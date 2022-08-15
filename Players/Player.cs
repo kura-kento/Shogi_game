@@ -13,6 +13,7 @@ public class Player : PlayerController
 {
     private GameObject parent;
     public static Player instance;
+    PhotonView photonView;
     int[] player_1 = new int[] { 1, 2, 3, 4, 5 };
     int[] player_2 = new int[] { -6, -4, -8, -7, -1 };
 
@@ -24,11 +25,16 @@ public class Player : PlayerController
     private void Start()
     {
         Debug.Log(PhotonNetwork.LocalPlayer);
+        var obj = PhotonNetwork.Instantiate("Koma", new Vector3(0, 0, 0), Quaternion.identity, 0);
+        photonView = obj.GetComponent<PhotonView>();
+        Debug.Log(photonView);
+        // photonView.RPC(nameof(SetupPhoton) , RpcTarget.All);
         SetupPhoton();
         // SetupKomadai();
         // GameMaster.MasuStatusLog();
     }
 
+    // [PunRPC]
     public void SetupPhoton() {
         for(int i=0;i<5;i++) {
             var obj = PhotonNetwork.Instantiate("Koma", new Vector3(0, 0, 0), Quaternion.identity, 0);
@@ -42,16 +48,17 @@ public class Player : PlayerController
             EventTrigger.Entry entry = new EventTrigger.Entry();
             entry.eventID = EventTriggerType.PointerDown;
             entry.callback.AddListener((data) => { 
-                    Debug.Log("ボタンをクリックした");
                     SelectKoma(koma);
                 });
             trigger.triggers.Add(entry);
 
-            koma.transform.parent = GameObject.Find("Komadai").transform;
+            koma.transform.parent = GameObject.Find("Komadai1").transform;
             koma.tag = "Komadai";
 
-            koma.transform.localPosition = new Vector3(0.40f - 0.2f * i, 0, 0);
+            koma.transform.localPosition = new Vector3((App.MASU_SIZE * 2.0f) - (App.MASU_SIZE * i), 0, 0);
+            koma.transform.localScale = new Vector3(App.MASU_SIZE, App.MASU_SIZE, App.MASU_SIZE);
         }
+        
     }
 
     void Update()
@@ -62,21 +69,21 @@ public class Player : PlayerController
     //初期配置
     public void SetupKomadai()
     {
-        // GameObject komadai = GameObject.Find("Komadai");
+        // GameObject komadai = GameObject.Find("Komadai1");
         //自身の駒
         for(int i=0;i<5;i++) {
             Koma Fu = KomaGenerator.instance.Spawn(player_1[i]);
-            Fu.transform.parent = GameObject.Find("Komadai").transform;
+            Fu.transform.parent = GameObject.Find("Komadai1").transform;
             Fu.tag = "Komadai";
 
-            Fu.transform.localPosition = new Vector3(0.40f - 0.2f * i, 0, 0);
+            Fu.transform.localPosition = new Vector3(App.MASU_SIZE - 2.5f * i, 0, 0);
             Fu.ClickAction = SelectKoma; //クリックされた時関数を呼ぶ
         }
     }
 
     //コマクリック時(自分が生成した)
     public void SelectKoma(Koma koma)
-    {
+    {   
         GameMaster.ResetMasu();//リセット
 
         //同じ駒を押した時、キャンセルする。
@@ -87,6 +94,7 @@ public class Player : PlayerController
 
         GameObject parent = koma.transform.parent.gameObject;//駒の親要素を取得
         App.slot = koma;
+        
         //「KOMA_SET」の時
         if(App.game_type == GAME_TYPE.KOMA_SET) {
             //全ての
@@ -94,19 +102,20 @@ public class Player : PlayerController
             return;
         }
         //駒台からの移動
-        if (parent.name == "Komadai") {
+        if (parent.name == "Komadai1") {
             //選択できるマスを表示する(0のステータスのマスを色を変化させる)
             CreateSelectObj(true);
         }
         //盤上からの移動
         else if(parent.name == "Masu") {
+            Debug.Log("盤上からの移動");
             SelectObj(koma, true);
         }
     }
 
     public Koma CreateKoma(int status) {
         Koma k = KomaGenerator.instance.Spawn(status);
-        k.transform.parent = GameObject.Find("Komadai").transform;
+        k.transform.parent = GameObject.Find("Komadai1").transform;
         k.tag = "Komadai";
         k.ClickAction = SelectKoma; //クリックされた時関数を呼ぶ
         return k;
