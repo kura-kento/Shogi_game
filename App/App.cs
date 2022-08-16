@@ -12,6 +12,14 @@ public enum GAME_TYPE
     KOMA_SET,    // 並べる
     BATTLE,  // 対戦中
 }
+
+// 先手：後手
+public enum PLAYER_TYPE
+{
+    NULL,
+    FIRST,   // 先手
+    SECOND,  // 後手
+}
  
 
 public class App : MonoBehaviour

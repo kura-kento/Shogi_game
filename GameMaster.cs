@@ -8,7 +8,7 @@ using System.Linq;
 
 public class GameMaster : MonoBehaviour
 {
-
+    private PLAYER_TYPE player_type; // 先手？後手？
     
     // Start is called before the first frame update
     void Start()
@@ -20,6 +20,19 @@ public class GameMaster : MonoBehaviour
     void Update()
     {
         
+    }
+
+    //先手後手を入れる。（一度しか呼ばれない)
+    public void SetPlayerType(PLAYER_TYPE type)
+    {
+        // if(this.player_type != PLAYER_TYPE.NULL) { throw new System.Exception("先手後手判定エラー:既に設定されている"+this.player_type.ToString());}
+        // Debug.Log("ああああ");
+        this.player_type = type;
+    }
+
+    public PLAYER_TYPE GetPlayerType()
+    {
+        return this.player_type;
     }
 
     //マスのステータス(ログ)

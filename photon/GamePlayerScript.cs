@@ -10,7 +10,7 @@ public class GamePlayerScript : MonoBehaviourPunCallbacks
 
     private readonly Color[]    MATERIAL_COLORS = new Color[]
     {
-        Color.white, Color.red, Color.green, Color.blue, Color.green,
+        Color.white, Color.white, Color.white, Color.blue, Color.green,
     };
 
     void Awake()

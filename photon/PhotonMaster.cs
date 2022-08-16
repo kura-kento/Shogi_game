@@ -9,6 +9,7 @@ public class PhotonMaster : MonoBehaviourPunCallbacks
 {
     public TMP_Text statusText;
     private const int MaxPlayerPerRoom = 2;
+    public static GameMaster GM = new GameMaster();
     
     private void Awake()
     {
@@ -17,6 +18,7 @@ public class PhotonMaster : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     private void Start()
     {
+        // PLAYER_TYPE MasterPlayerType =  PLAYER_TYPE.FIRST;//最終的にはここでランダムに決める。
         PhotonNetwork.ConnectUsingSettings();
     }
 
@@ -56,7 +58,9 @@ public class PhotonMaster : MonoBehaviourPunCallbacks
     {
         Debug.Log("ルームに参加しました");
         //ここに入った
-
+        
+        GM.SetPlayerType(PLAYER_TYPE.SECOND);
+        // Debug.Log(GM.GetPlayerType());
         // var gameObject = PhotonNetwork.Instantiate("Koma", new Vector3(0, 0, 0), Quaternion.identity, 0);
 
         int playerCount = PhotonNetwork.CurrentRoom.PlayerCount;
@@ -64,9 +68,9 @@ public class PhotonMaster : MonoBehaviourPunCallbacks
         {
             statusText.text = "対戦相手を待っています。";
 
-            PhotonNetwork.CurrentRoom.IsOpen = false;
-            statusText.text = "対戦相手が揃いました。バトルシーンに移動します。";
-            PhotonNetwork.LoadLevel("BattleScene");
+            // PhotonNetwork.CurrentRoom.IsOpen = false;
+            // statusText.text = "対戦相手が揃いました。バトルシーンに移動します。";
+            // PhotonNetwork.LoadLevel("BattleScene");
         }
         else
         {
