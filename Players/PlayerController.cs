@@ -6,6 +6,7 @@ using Photon.Pun;
 
 public class PlayerController : MonoBehaviourPunCallbacks
 {
+    public PhotonView photonView { get; }
     Vector3 select_1 = new Vector3(App.MASU_SIZE * -1.0f,App.MASU_SIZE *  1.0f, 0);
     Vector3 select_2 = new Vector3(    0,App.MASU_SIZE *  1.0f, 0);
     Vector3 select_3 = new Vector3(App.MASU_SIZE * 1.0f, App.MASU_SIZE * 1.0f, 0);
@@ -20,9 +21,13 @@ public class PlayerController : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
+        photonView.RPC(nameof(RpcSendMessage), RpcTarget.All, "こんにちは");
 
     }
-
+    [PunRPC]
+    private void RpcSendMessage(string message) {
+        Debug.Log(message);
+    }
     // Update is called once per frame
     void Update()
     {

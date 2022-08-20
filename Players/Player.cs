@@ -13,7 +13,6 @@ public class Player : PlayerController
 {
     private GameObject parent;
     public static Player instance;
-    // PhotonView photonView;
     string KOMADAI;
     bool isFirstPlayer;
     int[] player_1 = new int[] { 1, 2, 3, 4, 5 };
@@ -26,20 +25,31 @@ public class Player : PlayerController
 
     private void Start()
     {
+        PhotonView photonView = PhotonView.Get(this);
+        
         // 先手後手の情報取得
         Debug.Log(PhotonMaster.GM.GetPlayerType());
         Debug.Log("PhotonNetwork.LocalPlayer:" + PhotonNetwork.LocalPlayer.ToString());
         Debug.Log(PhotonNetwork.LocalPlayer.ToString().Contains("#01"));
 
         //　ルーム作成者が先手　かつ　ルーム作成者の場合 または　ルーム作成者が後手　かつ　ルーム参加者の場合 
-        isFirstPlayer = PhotonMaster.GM.GetPlayerType() == PLAYER_TYPE.FIRST && PhotonNetwork.LocalPlayer.ToString().Contains("#01") || PhotonMaster.GM.GetPlayerType() == PLAYER_TYPE.SECOND && PhotonNetwork.LocalPlayer.ToString().Contains("#02");
+        isFirstPlayer = true || PhotonMaster.GM.GetPlayerType() == PLAYER_TYPE.FIRST && PhotonNetwork.LocalPlayer.ToString().Contains("#01") || PhotonMaster.GM.GetPlayerType() == PLAYER_TYPE.SECOND && PhotonNetwork.LocalPlayer.ToString().Contains("#02");
         KOMADAI = isFirstPlayer ? "Komadai1" : "Komadai2";
 
-        SetupPhoton();
-        // SetupKomadai();
+        //後手のカメラ180度回転
+        // if (!isFirstPlayer) {
+        //     GameObject camera = GameObject.Find("Main Camera");
+        //     camera.transform.Rotate(0, 0, 180.0f);
+        // }
+        //
+        // photonView.RPC(nameof(SetupPhoton), RpcTarget.All);
+        // if (photonView.IsMine) {
+        //     photonView.RPC(nameof(SetupPhoton), RpcTarget.All);
+        // }
+        // SetupPhoton();
+        SetupKomadai();
         // GameMaster.MasuStatusLog();
     }
-
     // [PunRPC]
     public void SetupPhoton() {
         for(int i=0;i<5;i++) {
@@ -86,12 +96,12 @@ public class Player : PlayerController
         // GameObject komadai = GameObject.Find("Komadai1");
         //自身の駒
         for(int i=0;i<5;i++) {
-            Koma Fu = KomaGenerator.instance.Spawn(player_1[i]);
-            Fu.transform.parent = GameObject.Find("Komadai1").transform;
-            Fu.tag = "Komadai";
-
-            Fu.transform.localPosition = new Vector3(App.MASU_SIZE - 2.5f * i, 0, 0);
-            Fu.ClickAction = SelectKoma; //クリックされた時関数を呼ぶ
+            Koma Koma = KomaGenerator.instance.Spawn(player_1[i]);
+            Koma.transform.parent = GameObject.Find("Komadai1").transform;
+            Koma.tag = "Komadai";
+            Koma.transform.localPosition = new Vector3((App.MASU_SIZE * 2.0f) - (App.MASU_SIZE * i), 0, 0);
+            Koma.transform.localScale = new Vector3(App.MASU_SIZE, App.MASU_SIZE, App.MASU_SIZE);
+            Koma.ClickAction = SelectKoma; //クリックされた時関数を呼ぶ
         }
     }
 

@@ -67,9 +67,9 @@ public class MasuGenerator : MonoBehaviour
                 masu.transform.localPosition = new Vector3(x * Masu.width, y *Masu.hight, 0);
                 masu.transform.localScale = new Vector3(App.MASU_SIZE, App.MASU_SIZE, App.MASU_SIZE);
                 // masu.transform.localPosition
-                // masu.name = "Masu" + i.ToString()+ "_" + j.ToString();
+                masu.name = "Masu" + (i+1).ToString()+ "_" + (j+1).ToString();
                 
-                masu.name = "Masu";
+                // masu.name = "Masu";
                 if (masu1_init[i,j] == 1 ) {
                     masu.Init(-1);
                     masu.ClickAction = SelectMasu; //クリックされた時関数を呼ぶ
@@ -95,7 +95,8 @@ public class MasuGenerator : MonoBehaviour
                 float x = (App.MASU_SIZE * 2.5f) - (App.MASU_SIZE * j);//6枚
                 masu.transform.localPosition = new Vector3(x * Masu.width, y *Masu.hight, 0);
                 masu.transform.localScale = new Vector3(App.MASU_SIZE, App.MASU_SIZE, App.MASU_SIZE);
-                masu.name = "Masu";
+                masu.name = "Masu" + (i+4).ToString()+ "_" + (j+1).ToString();
+                // masu.name = "Masu";
                 if (masu2_init[i,j] == 1 ) {
                     masu.Init(1);
                     masu.ClickAction = SelectMasu; //クリックされた時関数を呼ぶ
@@ -115,7 +116,6 @@ public class MasuGenerator : MonoBehaviour
 
     public async void SelectMasu(Masu masu)
     {
-
         // コマが選択されている時
         if(App.slot != null) {
             //コマが選択されている時 かつ　「選択可能マス」

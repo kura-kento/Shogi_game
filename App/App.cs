@@ -63,6 +63,28 @@ public class App : MonoBehaviour
         return obj.transform.GetChild(0).gameObject.GetComponent<Koma>();
     }
 
+    //マスに置いているコマの情報を取得する。
+    public static Koma KomadaiGetChildKoma(GameObject obj, string koma_name = null) {
+        Transform children = obj.GetComponentInChildren<Transform>();
+        //子要素がいなければ終了
+        if (children.childCount == 0) {
+            Debug.Log("子要素がいなければ終了");
+            return null;
+        }
+        Koma koma;
+        int index = 0;
+        foreach(var child in children) {
+            koma = obj.transform.GetChild(index).gameObject.GetComponent<Koma>();
+            Debug.Log(koma.number.ToString());
+            if(koma.number.ToString() == koma_name) {
+                return koma;
+            }
+            index++;
+        }
+        return null;
+    }
+
+
     //相手の駒か？(0がnullにしても良いかも)
     public static bool isEnemyKoma(Koma koma) {
         //先攻のターン　かつ　駒がマイナス
