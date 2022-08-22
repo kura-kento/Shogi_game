@@ -114,7 +114,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
                 foreach (Masu obj in FindObjectsOfType<Masu>())
                 {
-                    Koma masu_koma = App.GetChildKoma(obj);
+                    Koma masu_koma = App.GetChildKoma(GameObject.Find(obj.name));
                     if (obj.transform.localPosition == select_ke_left || obj.transform.localPosition == select_ke_right) {
 
                         // 駒が無い　または　(先攻+マイナス駒　または　後攻+プラス駒)
@@ -302,7 +302,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             // セットした座標か？
             if (Array.IndexOf(selectArray, obj.transform.localPosition) >= 0) {
                 
-                Koma masu_koma = App.GetChildKoma(obj);
+                Koma masu_koma = App.GetChildKoma(GameObject.Find(obj.name));
                 // 駒が無い
                 if(Masu.isNoUseMasu(obj)) {
                     isEnd = true; //処理を止める

@@ -32,6 +32,9 @@ public class App : MonoBehaviour
     public static int MAX_X = 4;
    
     public static float MASU_SIZE = 275f;
+    public static string KOMADAI1_NAME = "Komadai1";
+    public static string KOMADAI2_NAME = "Komadai2";
+    
 
     public static bool isTurePlayer1 = true;
     public static int Turn = 1;
@@ -54,22 +57,24 @@ public class App : MonoBehaviour
     }
 
     //マスに置いているコマの情報を取得する。
-    public static Koma GetChildKoma(Masu obj) {
-        Transform children = obj.GetComponentInChildren<Transform>();
-        //子要素がいなければ終了
-        if (children.childCount == 0) {
-            return null;
-        }
-        return obj.transform.GetChild(0).gameObject.GetComponent<Koma>();
-    }
+    // public static Koma GetChildKoma(Masu obj) {
+    //     Transform children = obj.GetComponentInChildren<Transform>();
+    //     //子要素がいなければ終了
+    //     if (children.childCount == 0) {
+    //         return null;
+    //     }
+    //     return obj.transform.GetChild(0).gameObject.GetComponent<Koma>();
+    // }
 
     //マスに置いているコマの情報を取得する。
-    public static Koma KomadaiGetChildKoma(GameObject obj, string koma_name = null) {
+    public static Koma GetChildKoma(GameObject obj, string koma_name = null) {
         Transform children = obj.GetComponentInChildren<Transform>();
-        //子要素がいなければ終了
+
         if (children.childCount == 0) {
             Debug.Log("子要素がいなければ終了");
             return null;
+        } else if (children.childCount == 1) {
+            return obj.transform.GetChild(0).gameObject.GetComponent<Koma>();
         }
         Koma koma;
         int index = 0;
@@ -108,6 +113,8 @@ public class App : MonoBehaviour
     public static Vector3 ReverseVector(Vector3 vector3) {
         return new Vector3(-(vector3.x), -(vector3.y), vector3.z);
     }
+
+    
   
 
 //色を変える
@@ -118,4 +125,7 @@ public class App : MonoBehaviour
 
 //配列に当てはまっている
 //Array.IndexOf(evolutionList, App.slot.number) >= 0 
+
+//文字
+//str.Contains("にゃん")
 }

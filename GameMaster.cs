@@ -27,27 +27,36 @@ public class GameMaster : MonoBehaviour
        new List<int?> {null,null,null,null,null,null}
     };
     // int[] player_1 = new int[] { 1, 2, 3, 4, 5 };
+    // int[] player_2 = new int[] { -6, -4, -8, -7, -1 };
     //駒セット時の手順
     private List<Dictionary<string, string?>> KOMA_SET_ACTION = new List<Dictionary<string, string?>>{
-        new Dictionary<string, string?> {{"koma_num","1"}, {"before",null} ,{"after","5_1"},},
-        new Dictionary<string, string?> {{"koma_num","2"}, {"before",null} ,{"after","4_2"},},
+        // new Dictionary<string, string?> {{"koma_num","1"}, {"before",null} ,{"after","5_1"},},
+        // new Dictionary<string, string?> {{"koma_num","2"}, {"before",null} ,{"after","4_2"},},
         new Dictionary<string, string?> {{"koma_num","3"}, {"before",null} ,{"after","4_3"},},
         new Dictionary<string, string?> {{"koma_num","4"}, {"before",null} ,{"after","4_4"},},
         new Dictionary<string, string?> {{"koma_num","5"}, {"before",null} ,{"after","5_5"},},
+
+        new Dictionary<string, string?> {{"koma_num","-6"}, {"before",null} ,{"after","1_2"},},
+        new Dictionary<string, string?> {{"koma_num","-4"}, {"before",null} ,{"after","1_3"},},
+        new Dictionary<string, string?> {{"koma_num","-8"}, {"before",null} ,{"after","1_4"},},
+        new Dictionary<string, string?> {{"koma_num","-7"}, {"before",null} ,{"after","2_2"},},
+        new Dictionary<string, string?> {{"koma_num","-1"}, {"before",null} ,{"after","3_2"},},
+
     };
 
     //バトル中の手順
     private List<Dictionary<string, string>> BATTLE_ACTION = new List<Dictionary<string, string>>{
-        new Dictionary<string, string> {{"koma_num","6"}, {"before","4_1"} ,{"after","4_2"},},
+        new Dictionary<string, string> {{"koma_num","5"}, {"before","4_3"} ,{"after","4_2"},},
     };
 
 
     // Start is called before the first frame update
     void Start()
     {
-        Dictionary<string, string> i = new Dictionary<string, string>{{"koma_num","8"}, {"before","5_1"} ,{"after","5_2"},};
-        BATTLE_ACTION.Add(i);
+        // Dictionary<string, string> i = new Dictionary<string, string>{{"koma_num","8"}, {"before","5_1"} ,{"after","5_2"},};
+        // BATTLE_ACTION.Add(i);
         MoveList(KOMA_SET_ACTION);
+        MoveList(BATTLE_ACTION);
     }
 
     // Update is called once per frame
@@ -111,39 +120,51 @@ public class GameMaster : MonoBehaviour
         // moveList["koma_num"];// moveList["before"];// moveList["after"];
 
         // 【共通】盤上,駒台
-        var masu_name = "Masu" + moveList["after"];
-        Masu masu = GameObject.Find(masu_name).GetComponent<Masu>();
+        string masu_after = "Masu" + moveList["after"];
+        Masu masu = GameObject.Find(masu_after).GetComponent<Masu>();
             Debug.Log("マス:" + masu.ToString());
         //　駒台から
         if(moveList["before"] == null) {
             
-            GameObject gameObject2 = GameObject.Find("Komadai1");
-            // var koma_list = gameObject2.GetComponentsInChildren<Koma>();
-            // foreach(Koma koma in koma_list) {
-            //     Debug.Log("駒:" + koma.ToString());
-            // }
-            Koma masu_koma = App.KomadaiGetChildKoma(gameObject2, koma_name: moveList["koma_num"]);
+            GameObject komadai_obj = GameObject.Find(Int32.Parse(moveList["koma_num"]) > 0 ? App.KOMADAI1_NAME : App.KOMADAI2_NAME);
+            Koma masu_koma = App.GetChildKoma(obj: komadai_obj, koma_name: moveList["koma_num"]);
 
-            if(masu_koma == null) {
-                Debug.Log("駒: NULL");
-            }else{
-                Debug.Log("駒:" + masu_koma.number.ToString());
-            }
+            // if(masu_koma == null) {
+            //     Debug.Log("駒: NULL");
+            // }else{
+            //     Debug.Log("駒:" + masu_koma.number.ToString());
+            // }
             //駒台 => 盤上
             masu_koma.transform.parent = masu.transform; //マスを親にする。
+
+
             // //使ったら駒台の位置を並び替える。
-            // var koma_children = komadai_obj.GetComponentsInChildren<Koma>();
-            // int i = 0;
-            // foreach(Koma koma_child in koma_children) {
-            //     koma_child.transform.localPosition = new Vector3(KomadaiVectorX(i), 0, 0);
-            //     i++;
-            // }
+            var koma_children = komadai_obj.GetComponentsInChildren<Koma>();
+            int i = 0;
+            foreach(Koma koma_child in koma_children) {
+                koma_child.transform.localPosition = new Vector3(KomadaiVectorX(i), 0, 0);
+                i++;
+            }
 
             //マスの状態をリセットする
-            // GameMaster.ResetMasu();
+            GameMaster.ResetMasu();
             masu_koma.transform.localPosition = new Vector3(0, 0, 0);
-            
+        // 盤上
+        } else {
+            var masu_before = "Masu" + moveList["before"];
+
+            GameObject masu_before_obj = GameObject.Find(masu_before);
+            Koma before_koma = App.GetChildKoma(obj: masu_before_obj, koma_name: moveList["koma_num"]);
+
+            GameObject masu_after_obj = GameObject.Find(masu_after);
+            Masu after_masu = masu_after_obj.GetComponent<Masu>();
+            // Koma after_koma = App.GetChildKoma(obj: masu_after_obj, koma_name: moveList["koma_num"]);
+
+            before_koma.transform.parent = after_masu.transform; //マスを親にする。
+            before_koma.transform.localPosition = new Vector3(0, 0, 0);
         }
+
+
 
         // Debug.Log(masu_koma);
         //盤上
@@ -193,6 +214,10 @@ public class GameMaster : MonoBehaviour
         //     // TODO:ここに勝利判定を入れる
         //     TurnEnd();//ダーン終了の処理    
         // }
+    }
+    //駒台の座標
+    public float KomadaiVectorX(int i) {
+        return App.isTurePlayer1 ? (App.MASU_SIZE * 2.0f) - (App.MASU_SIZE * i) : -(App.MASU_SIZE * 2.0f) + (App.MASU_SIZE * i) * i;
     }
     
 

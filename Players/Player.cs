@@ -34,7 +34,7 @@ public class Player : PlayerController
 
         //　ルーム作成者が先手　かつ　ルーム作成者の場合 または　ルーム作成者が後手　かつ　ルーム参加者の場合 
         isFirstPlayer = true || PhotonMaster.GM.GetPlayerType() == PLAYER_TYPE.FIRST && PhotonNetwork.LocalPlayer.ToString().Contains("#01") || PhotonMaster.GM.GetPlayerType() == PLAYER_TYPE.SECOND && PhotonNetwork.LocalPlayer.ToString().Contains("#02");
-        KOMADAI = isFirstPlayer ? "Komadai1" : "Komadai2";
+        KOMADAI = isFirstPlayer ? App.KOMADAI1_NAME : App.KOMADAI2_NAME;
 
         //後手のカメラ180度回転
         // if (!isFirstPlayer) {
@@ -103,6 +103,17 @@ public class Player : PlayerController
             Koma.transform.localScale = new Vector3(App.MASU_SIZE, App.MASU_SIZE, App.MASU_SIZE);
             Koma.ClickAction = SelectKoma; //クリックされた時関数を呼ぶ
         }
+
+        //相手の駒
+        for(int i=0;i<5;i++) {
+            Koma Koma = KomaGenerator.instance.Spawn(player_2[i]);
+            Koma.transform.parent = GameObject.Find("Komadai2").transform;
+            Koma.tag = "Komadai";
+            Koma.transform.localPosition = new Vector3(-(App.MASU_SIZE * 2.0f) + (App.MASU_SIZE * i), 0, 0);
+            Koma.transform.localScale = new Vector3(App.MASU_SIZE, App.MASU_SIZE, App.MASU_SIZE);
+            Koma.ClickAction = SelectKoma; //クリックされた時関数を呼ぶ
+            Koma.transform.Rotate(0, 0, 180.0f);
+        }
     }
 
     //コマクリック時(自分が生成した)
@@ -132,9 +143,11 @@ public class Player : PlayerController
             CreateSelectObj(isFirstPlayer: isFirstPlayer);
         }
         //盤上からの移動
-        else if(parent.name == "Masu") {
+        else if(parent.name.Contains("Masu")) {
             Debug.Log("盤上からの移動");
             SelectObj(koma, isFirstPlayer: isFirstPlayer);
+        }else {
+            Debug.Log("エラー");
         }
     }
 

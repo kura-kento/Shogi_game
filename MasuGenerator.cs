@@ -121,7 +121,7 @@ public class MasuGenerator : MonoBehaviour
             //コマが選択されている時 かつ　「選択可能マス」
             if(masu.tag == "Select") {
                 //選択したマスの駒情報 取得
-                Koma masu_koma = App.GetChildKoma(masu);
+                Koma masu_koma = App.GetChildKoma(GameObject.Find(masu.name));
 
                 GameObject parent = App.slot.transform.parent.gameObject;
 
