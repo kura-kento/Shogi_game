@@ -17,6 +17,7 @@ public class Player : PlayerController
     bool isFirstPlayer;
     int[] player_1 = new int[] { 1, 2, 3, 4, 5 };
     int[] player_2 = new int[] { -6, -4, -8, -7, -1 };
+    
 
     private void Awake()
     {
@@ -25,8 +26,8 @@ public class Player : PlayerController
 
     private void Start()
     {
-        PhotonView photonView = PhotonView.Get(this);
-        
+        // m_photonView    = GetComponent<PhotonView>();
+        // m_photonView.RPC(nameof(RpcSendMessage), RpcTarget.All, "こんにちは");
         // 先手後手の情報取得
         Debug.Log(PhotonMaster.GM.GetPlayerType());
         Debug.Log("PhotonNetwork.LocalPlayer:" + PhotonNetwork.LocalPlayer.ToString());
@@ -50,6 +51,12 @@ public class Player : PlayerController
         SetupKomadai();
         // GameMaster.MasuStatusLog();
     }
+
+    // [PunRPC]
+    // private void RpcSendMessage(string message) {
+    //     Debug.Log(message);
+    // }
+
     // [PunRPC]
     public void SetupPhoton() {
         for(int i=0;i<5;i++) {

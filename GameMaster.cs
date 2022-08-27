@@ -5,8 +5,12 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using System;
 using System.Linq;
+using Photon.Pun;
+using ExitGames.Client.Photon;
+using Photon.Realtime;
+using Photon.Pun;
 
-public class GameMaster : MonoBehaviour
+public class GameMaster : MonoBehaviour, IOnEventCallback
 {
     private PLAYER_TYPE player_type; // 先手？後手？
     int?[,] MASU_DATA = new int?[6, 6] {
@@ -46,9 +50,8 @@ public class GameMaster : MonoBehaviour
 
     //バトル中の手順
     private List<Dictionary<string, string>> BATTLE_ACTION = new List<Dictionary<string, string>>{
-        new Dictionary<string, string> {{"koma_num","5"}, {"before","4_3"} ,{"after","4_2"},},
+        // new Dictionary<string, string> {{"koma_num","5"}, {"before","4_3"} ,{"after","4_2"},},
     };
-
 
     // Start is called before the first frame update
     void Start()
@@ -56,8 +59,9 @@ public class GameMaster : MonoBehaviour
         // Dictionary<string, string> i = new Dictionary<string, string>{{"koma_num","8"}, {"before","5_1"} ,{"after","5_2"},};
         // BATTLE_ACTION.Add(i);
         MoveList(KOMA_SET_ACTION);
-        MoveList(BATTLE_ACTION);
+        // MoveList(BATTLE_ACTION);
     }
+
 
     // Update is called once per frame
     void Update()
@@ -65,11 +69,68 @@ public class GameMaster : MonoBehaviour
         
     }
 
+    public void SetMoveAction(Dictionary<string, string> moveList)
+    {
+        BATTLE_ACTION.Add(moveList);
+        MoveAction(KOMA_SET_ACTION.Last());
+        //　初期配置に戻して
+        //　MoveList(BATTLE_ACTION);
+        // シーン自体を初期化にして
+    }
+//=======全体=============
+    public void OnEnable()
+    {
+        PhotonNetwork.AddCallbackTarget(this);
+    }
+
+    public void OnDisable()
+    {
+        PhotonNetwork.RemoveCallbackTarget(this);
+    }
+
+    public void AllEvent(Dictionary<string, string> MoveAction)
+    {
+        Debug.Log("AllEvent");
+
+        object[] content = new object[] { MoveAction }; // Array contains the target position and the IDs of the selected units
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All }; // You would have to set the Receivers to All in order to receive this event on the local client as well
+        PhotonNetwork.RaiseEvent(1, MoveAction, raiseEventOptions, SendOptions.SendReliable);
+    }
+
+    public void OnEvent(EventData photonEvent)
+    {   
+        // object[] data = (object[])photonEvent.CustomData;
+        // Dictionary<string, string> MoveAction = (Dictionary<string, string>)data[0];
+
+        byte eventCode = photonEvent.Code;
+        switch( eventCode )
+        {
+            case 1:
+                Dictionary<string, string> MoveAction2 = new Dictionary<string, string>{{"koma_num", "5"}, {"before", "5_5"} ,{"after", "4_5"},};
+
+                // SetMoveAction(MoveAction2);
+                // SetMoveAction(MoveAction);
+                MoveAction(MoveAction2);
+                // MoveAction(KOMA_SET_ACTION.Last());
+                break;
+            default:
+                break;
+        }
+    }
+
+//=======全体END=============
+    public void GetMoveAction()
+    {
+        foreach(var moveList in BATTLE_ACTION) {
+            Debug.Log("koma_num:" + moveList["koma_num"] + "before:" + moveList["before"] + "after:" + moveList["after"]);
+        }
+
+    }
+
     //先手後手を入れる。（一度しか呼ばれない)
     public void SetPlayerType(PLAYER_TYPE type)
     {
         // if(this.player_type != PLAYER_TYPE.NULL) { throw new System.Exception("先手後手判定エラー:既に設定されている"+this.player_type.ToString());}
-        // Debug.Log("ああああ");
         this.player_type = type;
     }
 
@@ -86,7 +147,7 @@ public class GameMaster : MonoBehaviour
             // Debug.Log((App.MAX_Y-i).ToString()+"行目"+string.Join(",", intArray)); 
         }
     }
-
+ 
     //全てのマスの選択をキャンセルする
     public static void ResetMasu() {
         foreach (Masu masu in FindObjectsOfType<Masu>())
@@ -163,68 +224,9 @@ public class GameMaster : MonoBehaviour
             before_koma.transform.parent = after_masu.transform; //マスを親にする。
             before_koma.transform.localPosition = new Vector3(0, 0, 0);
         }
-
-
-
-        // Debug.Log(masu_koma);
-        //盤上
-        // if(moveList["before"] != null) {
-        //     // 【駒を成る】この処理はなしkoma_numで成り不成がわかる
-        //     // moveMap["after"]
-
-        //     //駒有り　かつ　相手の駒の時
-        //     // if(masu_koma != null &&  App.isEnemyKoma(masu_koma)) {}
-        //         //TODO:【玉が取られた時】
-        //         // if(Mathf.Abs(masu_koma.number) == 1){ Win();}
-
-        //         //TODO: そこに駒が有れば取る
-        //         // moveMap["before"];41のマス情報を取得 4_1_Masuで配置
-        //         // 子の要素があるか？
-        //         //【駒を取った時の処理】
-
-        //         masu_koma.tag = "Komadai";
-        //         masu_koma.number *= -1;//ステータスを自分のコマに
-
-        //         Koma new_koma = App.isTurePlayer1 ?
-        //         Player.instance.CreateKoma(masu_koma.number):
-        //         Player2.instance.CreateKoma(masu_koma.number);
-
-        //         Destroy(masu_koma.transform.gameObject);
-        //         new_koma.transform.parent = komadai_obj.transform;
-
-        //         //【全駒】判定
-        //         if(isEnemyZero() == true){ Win();}
-        // }
-        // //共通処理
-        // App.slot.transform.parent = masu.transform; //マスを親にする。
-        // //使ったら駒台の位置を並び替える。
-        // var koma_children = komadai_obj.GetComponentsInChildren<Koma>();
-        // int i = 0;
-        // foreach(Koma koma_child in koma_children) {
-        //     koma_child.transform.localPosition = new Vector3(KomadaiVectorX(i), 0, 0);
-        //     i++;
-        // }
-        // //マスの状態をリセットする
-        // GameMaster.ResetMasu();
-        // App.slot.transform.localPosition = new Vector3(0, 0, 0);
-        // App.slot = null;
-
-        // //「BATTLE」の時
-        // if(App.game_type == GAME_TYPE.BATTLE) {
-        //     // TODO:ここに勝利判定を入れる
-        //     TurnEnd();//ダーン終了の処理    
-        // }
     }
     //駒台の座標
     public float KomadaiVectorX(int i) {
         return App.isTurePlayer1 ? (App.MASU_SIZE * 2.0f) - (App.MASU_SIZE * i) : -(App.MASU_SIZE * 2.0f) + (App.MASU_SIZE * i) * i;
     }
-    
-
-    //駒台の順番 
-    // public static void KomadaiSetPosition(Masu masu) {
-    //     masu.tag = "Select";
-    //     masu.GetComponent<SpriteRenderer>().color = App.Select_Color;
-    //     masu.GetComponent<Renderer>().sortingLayerName = "front++"; 
-    // }
 }

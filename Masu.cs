@@ -23,6 +23,7 @@ public class Masu : MonoBehaviour
 
     public void OnClickThis()
     {
+        if(this.tag != "Select"){return;}
         // Debug.Log("Masuが押されたよ！");
         // PalyerのSelectCardを実行　//外部に(player.cs)設定しているcard.ClickActionの処理を呼び出す？渡す？
         ClickAction.Invoke(this);
