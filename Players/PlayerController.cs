@@ -37,6 +37,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     //駒台から駒を【駒セット用】
     public void mySelectObj(bool isFirstPlayer) {
         if (App.game_type != GAME_TYPE.KOMA_SET) return; 
+        Debug.Log("駒台から駒を【駒セット用】isFirstPlayer" + isFirstPlayer.ToString());
         foreach (Masu obj in FindObjectsOfType<Masu>())
         {
             if(Masu.isNoUseMasu(obj)) continue;

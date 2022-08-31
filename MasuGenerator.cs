@@ -172,27 +172,18 @@ public class MasuGenerator : MonoBehaviourPunCallbacks
                 //     koma_child.transform.localPosition = new Vector3(KomadaiVectorX(i), 0, 0);
                 //     i++;
                 // }
-                MoveList(App.slot.number.ToString(), App.slot.transform.parent.name, masu.name);
-                //マスの状態をリセットする
-                GameMaster.ResetMasu();
-                // App.slot.transform.localPosition = new Vector3(0, 0, 0);
+
+                //動きデータを入れる
+                MoveList(App.slot.number.ToString(), App.slot.transform.parent.name.Replace("Masu",""), masu.name.Replace("Masu",""));
+ 
                 App.slot = null;
-            
-                //「BATTLE」の時
-                if(App.game_type == GAME_TYPE.BATTLE) {
-                    // TODO:ここに勝利判定を入れる
-                    //駒を動かす
-                    Debug.Log("テスト開始");
-                    // m_photonView.RPC(nameof(MoveList), RpcTarget.All,App.slot.number.ToString(),App.slot.transform.parent.name,masu.name);
-                    TurnEnd();//ダーン終了の処理    
-                }
             }
         } 
     }
 
     public void MoveList(string koma_num,string before,string after) {
-        // Dictionary<string, string> MoveAction = new Dictionary<string, string>{{"koma_num", koma_num}, {"before", before} ,{"after", after},};
-        Dictionary<string, string> MoveAction = new Dictionary<string, string>{{"koma_num", "5"}, {"before", "5_5"} ,{"after", "4_5"},};
+        Dictionary<string, string> MoveAction = new Dictionary<string, string>{{"koma_num", koma_num}, {"before", before} ,{"after", after},};
+        // Dictionary<string, string> MoveAction = new Dictionary<string, string>{{"koma_num", "5"}, {"before", "5_5"} ,{"after", "4_6"},};
 
         PhotonMaster.GM.AllEvent(MoveAction);
         //勝ち判定
@@ -218,13 +209,6 @@ public class MasuGenerator : MonoBehaviourPunCallbacks
     //駒台の座標
     public float KomadaiVectorX(int i) {
         return App.isTurePlayer1 ? (App.MASU_SIZE * 2.0f) - (App.MASU_SIZE * i) : -(App.MASU_SIZE * 2.0f) + (App.MASU_SIZE * i) * i;
-    }
-
-    //ダーン終了の処理
-    public void TurnEnd() {
-        App.isTurePlayer1 = !(App.isTurePlayer1);
-        App.Turn++; //ターン数増やす
-        App.turnUp();
     }
 
     //ダイアログが押されるまで待つ
