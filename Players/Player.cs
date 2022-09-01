@@ -137,8 +137,8 @@ public class Player : PlayerController
         GameObject parent = koma.transform.parent.gameObject;//駒の親要素を取得
         App.slot = koma;
         
-        //「KOMA_SET」の時
-        if(App.game_type == GAME_TYPE.KOMA_SET) {
+        //「SET」の時
+        if(App.game_type == GAME_TYPE.SET) {
             //全ての
             mySelectObj(isFirstPlayer: isFirstPlayer);
             return;

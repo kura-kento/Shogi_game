@@ -9,7 +9,7 @@ using TMPro;
 // 場所
 public enum GAME_TYPE
 {
-    KOMA_SET,    // 並べる
+    SET,    // 並べる
     WAIT,
     BATTLE,  // 対戦中
 }
@@ -25,8 +25,8 @@ public enum PLAYER_TYPE
 
 public class App : MonoBehaviour
 {
-    public static GAME_TYPE game_type = GAME_TYPE.KOMA_SET;
-
+    public static GAME_TYPE game_type = GAME_TYPE.SET;
+    public static List<Dictionary<string, string>> SET_ACTION = new List<Dictionary<string, string>>{};
     // public static int[][] masu_array = new int[4][];
 
     public static int MAX_Y = 4;//固定値

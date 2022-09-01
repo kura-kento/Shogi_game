@@ -8,13 +8,14 @@ using System.Linq;
 using Photon.Pun;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
+using UnityEngine.SceneManagement;
 
 public class GameMaster : MonoBehaviour, IOnEventCallback
 {
     static int[] player_cnt = new int[2]{0, 0}; //コマのセットが完了した人数
     // isAllDone = SET_PLAYER_CNT.All( value => value > 0 );
     private PLAYER_TYPE player_type; // 先手？後手？
-
+    RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
     // int[] player_1 = new int[] { 1, 2, 3, 4, 5 };
     // int[] player_2 = new int[] { -6, -4, -8, -7, -1 };
     //駒セット時の手順
@@ -39,16 +40,39 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
     // Start is called before the first frame update
     void Start()
     {
-        // MoveList(KOMA_SET_ACTION);
+        Debug.Log("GameMaster:Start()");
+        //【セット状態以外】
+        if(App.game_type != GAME_TYPE.SET) { 
+            Debug.Log("MoveList(App.SET_ACTION)");
+            Debug.Log("App.SET_ACTION.Count:" + App.SET_ACTION.Count);
+            MoveList(App.SET_ACTION); 
+        }
+        
+        foreach(var moveList in App.SET_ACTION) {
+            Debug.Log("koma_num:" + moveList["koma_num"] + "before:" + moveList["before"] + "after:" + moveList["after"]);
+
+            // MoveAction(test);
+        }
+       
     }
 
-    public void SetMoveAction(Dictionary<string, string> moveList)
+    public void SetMoveAction(Dictionary<string, string> moveAction)
     {
-        BATTLE_ACTION.Add(moveList);
-        MoveAction(BATTLE_ACTION.Last());
+        Debug.Log("SetMoveAction:"+this.KOMA_SET_ACTION.Count);
+        this.KOMA_SET_ACTION.Add(moveAction);
+         Debug.Log("SetMoveAction:"+this.KOMA_SET_ACTION.Count);
+        // MoveAction(BATTLE_ACTION.Last());
         //　初期配置に戻して  //　MoveList(BATTLE_ACTION); // シーン自体を初期化にして
     }
-//=======全体=============
+
+    public List<Dictionary<string, string>> GetSetKoma()
+    {
+        Debug.Log(this.KOMA_SET_ACTION.Count);
+        return this.KOMA_SET_ACTION;
+    }
+
+    
+//=======全体=========================================================================================================================================================================
     public void OnEnable()
     {
         PhotonNetwork.AddCallbackTarget(this);
@@ -59,24 +83,21 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
         PhotonNetwork.RemoveCallbackTarget(this);
     }
 
-    public void AllEvent(Dictionary<string, string> MoveAction)
+    public void AllSetAction()
     {
         Debug.Log("AllEvent");
-        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
-        PhotonNetwork.RaiseEvent(1, MoveAction, raiseEventOptions, SendOptions.SendReliable);
+        PhotonNetwork.RaiseEvent(1, null, raiseEventOptions, SendOptions.SendReliable);
     }
 
-    public void AllEvent2(Dictionary<string, string> MoveAction)
+    public void AllEvent2()
     {
-        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
-        PhotonNetwork.RaiseEvent(2, MoveAction, raiseEventOptions, SendOptions.SendReliable);
+        PhotonNetwork.RaiseEvent(2, null, raiseEventOptions, SendOptions.SendReliable);
     }
 
     //セットした人数を追加する
     public void AddDonePlayer()
     {
         Debug.Log("AddDonePlayer");
-        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
         PhotonNetwork.RaiseEvent(3, null,raiseEventOptions, SendOptions.SendReliable);
     }
 
@@ -86,13 +107,19 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
         Dictionary<string, string> moveAction = (Dictionary<string, string>)photonEvent.CustomData;
 
         byte eventCode = photonEvent.Code;
+        Debug.Log("eventCode：" + eventCode);
         switch( eventCode )
         {
             case 1:
-                SetMoveAction(moveAction);
+                Debug.Log("App.SET_ACTION.AddRange(KOMA_SET_ACTION);");
+                App.SET_ACTION.AddRange(this.KOMA_SET_ACTION);
+                Debug.Log("ase 0:：" + App.SET_ACTION.Count);
                 break;
             case 2:
-                SetMoveAction(moveAction);
+                Debug.Log("AllEvent2");
+                Debug.Log("ase 1:：" + App.SET_ACTION.Count);
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                Debug.Log("ase 2:：" + App.SET_ACTION.Count);
                 break;
             case 3:
                 setPlayerCount(); //isFirstPlayer
@@ -104,19 +131,21 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
 
     public void setPlayerCount()
     {   
-        this.BATTLE_ACTION.AddRange(KOMA_SET_ACTION);
-        player_cnt[PhotonMaster.GM.GetPlayerType() == PLAYER_TYPE.FIRST ? 0 : 1] = 1;
-        bool isDone = player_cnt.All( value => value > 0 );
-        // ２人とも終わったら
-        if(isDone) { 
-            DontDestroyOnLoad(gameObject);
-            App.game_type = GAME_TYPE.BATTLE;
-            Debug.Log("配置モード　→　バトルモード");
-        }
-        Debug.Log("player_cnt:" + ":1番目⇨" +player_cnt[0] + ":2番目⇨" + player_cnt[1]);
+        // AllEvent2();
+        // this.BATTLE_ACTION.AddRange(KOMA_SET_ACTION);
+        // Debug.Log(this.BATTLE_ACTION.ToString());
+        // player_cnt[PhotonMaster.GM.GetPlayerType() == PLAYER_TYPE.FIRST ? 0 : 1] = 1;
+        // bool isDone = player_cnt.All( value => value > 0 );
+        // // ２人とも終わったら
+        // if(isDone) { 
+        //     DontDestroyOnLoad(gameObject);
+        //     App.game_type = GAME_TYPE.BATTLE;
+        //     Debug.Log("配置モード　→　バトルモード");
+        // }
+        // Debug.Log("player_cnt:" + ":1番目⇨" +player_cnt[0] + ":2番目⇨" + player_cnt[1]);
     }
 
-//=======全体END=============
+//=======全体END===========================================================================================================================================
     public void GetMoveAction()
     {
         foreach(var moveList in BATTLE_ACTION) {
@@ -164,24 +193,31 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
     }
 
     //手順　引数手順:[41金,42金] {koma_num: 6, before:[4,1] , after[4,2]} 42打金 {koma_num: 6, before: null, after:[4,2]} 
-    public void MoveList(List<Dictionary<string, string>> list) {        
+    public void MoveList(List<Dictionary<string, string>> list) {     
+         
         //初期配置からローカルで動かして盤面を配置する。
-        foreach(var moveList in list) {
-            MoveAction(moveList);
+        var i=1;
+        foreach(var moveAction in list) {
+            Debug.Log("MoveList:" + i + "回目");  
+            MoveAction(moveAction);
+            i++;
         }
     }
 
-    public void MoveAction(Dictionary<string, string> moveList) {
-        Debug.Log("koma_num:" + moveList["koma_num"] + "before:" + moveList["before"] + "after:" + moveList["after"]);
+    public void MoveAction(Dictionary<string, string> moveAction) {
+        // if(App.game_type == GAME_TYPE.KOMA_SET){
+        //    KOMA_SET_ACTION.Add(moveAction);
+        // }
+        Debug.Log("koma_num:" + moveAction["koma_num"] + "before:" + moveAction["before"] + "after:" + moveAction["after"]);
 
         // 【共通】盤上,駒台
-        string masu_after = "Masu" + moveList["after"];
+        string masu_after = "Masu" + moveAction["after"];
         Masu masu = GameObject.Find(masu_after).GetComponent<Masu>();
             Debug.Log("マス:" + masu.ToString());
         //　駒台から
-        if(moveList["before"].Contains("Komadai")) {
-            GameObject komadai_obj = GameObject.Find(Int32.Parse(moveList["koma_num"]) > 0 ? App.KOMADAI1_NAME : App.KOMADAI2_NAME);
-            Koma masu_koma = App.GetChildKoma(obj: komadai_obj, koma_name: moveList["koma_num"]);
+        if(moveAction["before"].Contains("Komadai")) {
+            GameObject komadai_obj = GameObject.Find(Int32.Parse(moveAction["koma_num"]) > 0 ? App.KOMADAI1_NAME : App.KOMADAI2_NAME);
+            Koma masu_koma = App.GetChildKoma(obj: komadai_obj, koma_name: moveAction["koma_num"]);
 
             //駒台 => 盤上
             masu_koma.transform.parent = masu.transform; //マスを親にする。
@@ -199,14 +235,14 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
             masu_koma.transform.localPosition = new Vector3(0, 0, 0);
         // 盤上
         } else {
-            var masu_before = "Masu" + moveList["before"];
+            var masu_before = "Masu" + moveAction["before"];
 
             GameObject masu_before_obj = GameObject.Find(masu_before);
-            Koma before_koma = App.GetChildKoma(obj: masu_before_obj, koma_name: moveList["koma_num"]);
+            Koma before_koma = App.GetChildKoma(obj: masu_before_obj, koma_name: moveAction["koma_num"]);
 
             GameObject masu_after_obj = GameObject.Find(masu_after);
             Masu after_masu = masu_after_obj.GetComponent<Masu>();
-            // Koma after_koma = App.GetChildKoma(obj: masu_after_obj, koma_name: moveList["koma_num"]);
+            // Koma after_koma = App.GetChildKoma(obj: masu_after_obj, koma_name: moveAction["koma_num"]);
 
             before_koma.transform.parent = after_masu.transform; //マスを親にする。
             before_koma.transform.localPosition = new Vector3(0, 0, 0);

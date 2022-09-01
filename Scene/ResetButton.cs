@@ -19,7 +19,7 @@ public class ResetButton : MonoBehaviour
 
     public void OnClick() {
         //コマセット時のみ使用可
-        if(App.game_type == GAME_TYPE.KOMA_SET){
+        if(App.game_type == GAME_TYPE.SET){
             SceneManager.LoadScene (SceneManager.GetActiveScene().name);
         }
 

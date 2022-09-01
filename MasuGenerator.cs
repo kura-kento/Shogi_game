@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Photon.Pun;
+using UnityEngine.SceneManagement;
 
 
 public class MasuGenerator : MonoBehaviourPunCallbacks
@@ -161,7 +162,7 @@ public class MasuGenerator : MonoBehaviourPunCallbacks
                     //     if(isEnemyZero() == true){ Win();}
                     // }
                 }
-                Debug.Log("koma_num" + App.slot.number.ToString() + "before" + App.slot.transform.parent.name + "after" + masu.name);
+                Debug.Log("koma_num" + App.slot.number.ToString() + "before" + App.slot.transform.parent.name + "after" + masu.name.Replace("Masu",""));
                 
                 // App.slot.transform.parent = masu.transform; //マスを親にする。
 
@@ -181,11 +182,12 @@ public class MasuGenerator : MonoBehaviourPunCallbacks
         } 
     }
 
+    //自分の端末のみリストに
     public void MoveList(string koma_num,string before,string after) {
         Dictionary<string, string> MoveAction = new Dictionary<string, string>{{"koma_num", koma_num}, {"before", before} ,{"after", after},};
         // Dictionary<string, string> MoveAction = new Dictionary<string, string>{{"koma_num", "5"}, {"before", "5_5"} ,{"after", "4_6"},};
-
-        PhotonMaster.GM.AllEvent(MoveAction);
+        PhotonMaster.GM.SetMoveAction(MoveAction);
+        PhotonMaster.GM.MoveAction(MoveAction);
         //勝ち判定
 
     }
