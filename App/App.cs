@@ -53,10 +53,12 @@ public class App : MonoBehaviour
     }
 
     void Start() {
+
     }
 
     //マスに置いているコマの情報を取得する。
     public static Koma GetChildKoma(GameObject obj, string koma_name = null) {
+        Debug.Log("マスに置いているコマの情報を取得する。");
         Transform children = obj.GetComponentInChildren<Transform>();
 
         if (children.childCount == 0) {
@@ -69,7 +71,7 @@ public class App : MonoBehaviour
         int index = 0;
         foreach(var child in children) {
             koma = obj.transform.GetChild(index).gameObject.GetComponent<Koma>();
-            Debug.Log(koma.number.ToString());
+            Debug.Log(new Koma().GetText(koma.number));
             if(koma.number.ToString() == koma_name) {
                 return koma;
             }

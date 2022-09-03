@@ -22,8 +22,8 @@ public class Button : MonoBehaviour
        //【待ち状態】押されたらApp.SET_ACTIONより再配置
        if(App.game_type == GAME_TYPE.WAIT) {
         //【全体】再構築
-            PhotonMaster.GM.AllEvent2();
-            Debug.Log("ここ？：" + App.SET_ACTION.Count);
+            // PhotonMaster.GM.AllEvent2();
+            Debug.Log("待機中:しかし、何も起こらなかった。。。");
             // foreach(var moveList in App.SET_ACTION){
             //     Debug.Log("koma_num:" + moveList["koma_num"] + "before:" + moveList["before"] + "after:" + moveList["after"]);
             // }

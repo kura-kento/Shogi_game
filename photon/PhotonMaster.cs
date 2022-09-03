@@ -68,9 +68,9 @@ public class PhotonMaster : MonoBehaviourPunCallbacks
         {
             statusText.text = "対戦相手を待っています。";
             GM.SetPlayerType(PLAYER_TYPE.FIRST);
-            PhotonNetwork.CurrentRoom.IsOpen = false;
-            statusText.text = "対戦相手が揃いました。バトルシーンに移動します。";
-            PhotonNetwork.LoadLevel("BattleScene");
+            // PhotonNetwork.CurrentRoom.IsOpen = false;
+            // statusText.text = "対戦相手が揃いました。バトルシーンに移動します。";
+            // PhotonNetwork.LoadLevel("BattleScene");
         }
         else
         {

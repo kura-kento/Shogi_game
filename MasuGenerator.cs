@@ -142,38 +142,9 @@ public class MasuGenerator : MonoBehaviourPunCallbacks
                             // KomaGenerator.instance.TextChange(App.slot);
                         }
                     }
-                    //駒有り　かつ　相手の駒の時
-                    // if(masu_koma != null &&  App.isEnemyKoma(masu_koma)) {
-                    //     //【玉が取られた時】
-                    //     if(Mathf.Abs(masu_koma.number) == 1){ Win();}
-
-                    //     //【駒を取った時の処理】
-                    //     masu_koma.tag = "Komadai";
-                    //     masu_koma.number *= -1;//ステータスを自分のコマに
-
-                    //     Koma new_koma = App.isTurePlayer1 ?
-                    //     Player.instance.CreateKoma(masu_koma.number):
-                    //     Player2.instance.CreateKoma(masu_koma.number);
-
-                    //     Destroy(masu_koma.transform.gameObject);
-                    //     new_koma.transform.parent = komadai_obj.transform;
-
-                    //     //【全駒】判定
-                    //     if(isEnemyZero() == true){ Win();}
-                    // }
                 }
                 Debug.Log("koma_num" + App.slot.number.ToString() + "before" + App.slot.transform.parent.name + "after" + masu.name.Replace("Masu",""));
                 
-                // App.slot.transform.parent = masu.transform; //マスを親にする。
-
-                //使ったら駒台の位置を並び替える。
-                // var koma_children = komadai_obj.GetComponentsInChildren<Koma>();
-                // int i = 0;
-                // foreach(Koma koma_child in koma_children) {
-                //     koma_child.transform.localPosition = new Vector3(KomadaiVectorX(i), 0, 0);
-                //     i++;
-                // }
-
                 //動きデータを入れる
                 MoveList(App.slot.number.ToString(), App.slot.transform.parent.name.Replace("Masu",""), masu.name.Replace("Masu",""));
  
