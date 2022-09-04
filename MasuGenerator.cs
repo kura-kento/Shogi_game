@@ -157,10 +157,14 @@ public class MasuGenerator : MonoBehaviourPunCallbacks
     public void MoveList(string koma_num,string before,string after) {
         Dictionary<string, string> MoveAction = new Dictionary<string, string>{{"koma_num", koma_num}, {"before", before} ,{"after", after},};
         // Dictionary<string, string> MoveAction = new Dictionary<string, string>{{"koma_num", "5"}, {"before", "5_5"} ,{"after", "4_6"},};
-        PhotonMaster.GM.SetMoveAction(MoveAction);
-        PhotonMaster.GM.MoveAction(MoveAction);
-        //勝ち判定
-
+        
+        //同期して動かす
+        if(App.game_type == GAME_TYPE.BATTLE) {
+            PhotonMaster.GM.ALLMoveAction(MoveAction);
+        } else {
+            PhotonMaster.GM.SetMoveAction(MoveAction);
+            PhotonMaster.GM.MoveAction(MoveAction);
+        }
     }
 
     public void Win() {

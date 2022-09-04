@@ -19,19 +19,7 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
     // int[] player_1 = new int[] { 1, 2, 3, 4, 5 };
     // int[] player_2 = new int[] { -6, -4, -8, -7, -1 };
     //駒セット時の手順
-    private List<Dictionary<string, string>> KOMA_SET_ACTION = new List<Dictionary<string, string>>{
-        // new Dictionary<string, string> {{"koma_num","1"}, {"before",null} ,{"after","5_1"},},
-        // new Dictionary<string, string> {{"koma_num","2"}, {"before",null} ,{"after","4_2"},},
-        // new Dictionary<string, string> {{"koma_num","3"}, {"before",App.KOMADAI1_NAME} ,{"after","4_3"},},
-        // new Dictionary<string, string> {{"koma_num","4"}, {"before",App.KOMADAI1_NAME} ,{"after","4_4"},},
-        // new Dictionary<string, string> {{"koma_num","5"}, {"before",App.KOMADAI1_NAME} ,{"after","5_5"},},
-
-        // new Dictionary<string, string> {{"koma_num","-6"}, {"before",App.KOMADAI2_NAME} ,{"after","1_2"},},
-        // new Dictionary<string, string> {{"koma_num","-4"}, {"before",App.KOMADAI2_NAME} ,{"after","1_3"},},
-        // new Dictionary<string, string> {{"koma_num","-8"}, {"before",App.KOMADAI2_NAME} ,{"after","1_4"},},
-        // new Dictionary<string, string> {{"koma_num","-7"}, {"before",App.KOMADAI2_NAME} ,{"after","2_2"},},
-        // new Dictionary<string, string> {{"koma_num","-1"}, {"before",App.KOMADAI2_NAME} ,{"after","3_2"},},
-    };
+    private List<Dictionary<string, string>> KOMA_SET_ACTION = new List<Dictionary<string, string>>{};
     // private List<Dictionary<string, string>> INIT_KOMA_SET;
 
     //バトル中の手順
@@ -61,10 +49,7 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
 
     public void SetMoveAction(Dictionary<string, string> moveAction)
     {
-        Debug.Log("SetMoveAction:"+this.KOMA_SET_ACTION.Count);
         this.KOMA_SET_ACTION.Add(moveAction);
-         Debug.Log("SetMoveAction:"+this.KOMA_SET_ACTION.Count);
-        // MoveAction(BATTLE_ACTION.Last());
         //　初期配置に戻して  //　MoveList(BATTLE_ACTION); // シーン自体を初期化にして
     }
 
@@ -89,21 +74,13 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
     public void AllSetAction()
     {
         Debug.Log("AllEvent");
-        // App.SET_ACTION.AddRange(this.KOMA_SET_ACTION);
-        // object[] content = new object[] {};
-        // foreach (var action in this.KOMA_SET_ACTION) {
-        //     // content[] = (string)action["koma_num"];
-        //     content.add((string)action["koma_num"]);
-        //     content.add((string)action["before"]);
-        //     content.add((string)action["after"]);
-        // }
-        Dictionary<string, string>[] content = new Dictionary<string, string>[] { KOMA_SET_ACTION[0] };
+        Dictionary<string, string>[] content = new Dictionary<string, string>[] {};
+        // ictionary<string, string>[] content2 = content.Append();
+        foreach(Dictionary<string, string> SET_ACTION in KOMA_SET_ACTION) {
+                    Array.Resize(ref content, content.Length + 1);
+                     content[content.Length - 1] = SET_ACTION;
+        }
 
-        // List<Dictionary<string, string>>[] content = new List<Dictionary<string, string>>[]{ KOMA_SET_ACTION };
-
-        // Dictionary<string, string>[] content = new Dictionary<string, string>[] { this.KOMA_SET_ACTION[0] };
-
-        // string[] content = new  string[] { (string)this.KOMA_SET_ACTION[0]["koma_num"], (string)this.KOMA_SET_ACTION[0]["before"], (string)this.KOMA_SET_ACTION[0]["after"]  };
         PhotonNetwork.RaiseEvent(1, content, raiseEventOptions, SendOptions.SendReliable);
         AllSetPlayerCount();
     }
@@ -115,11 +92,13 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
         PhotonNetwork.RaiseEvent(2, content, raiseEventOptions, SendOptions.SendReliable);
     }
 
-    //セットした人数を追加する
-    public void AddDonePlayer()
+    //【バトル中】
+    public void ALLMoveAction(Dictionary<string, string> moveAction)
     {
-        Debug.Log("AddDonePlayer");
-        PhotonNetwork.RaiseEvent(3, null,raiseEventOptions, SendOptions.SendReliable);
+        Debug.Log("ALLMoveAction");
+        Dictionary<string, string>[] content = new Dictionary<string, string>[] { moveAction };
+
+        PhotonNetwork.RaiseEvent(4, content, raiseEventOptions, SendOptions.SendReliable);
     }
 
     public void OnEvent(EventData photonEvent)
@@ -134,11 +113,14 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
         switch( eventCode )
         {
             case 1:
-                Dictionary<string, string>[] data = (Dictionary<string, string>[])photonEvent.CustomData;
-                App.SET_ACTION.Add(data[0]);
-                // App.SET_ACTION.AddRange(data[0]);
+                //【セット中】自分のセットした配置を変数に追加する
+                Dictionary<string, string>[] datas1 = (Dictionary<string, string>[])photonEvent.CustomData;
+                foreach(Dictionary<string, string> data in datas1) {
+                    App.SET_ACTION.Add(data);
+                }
                 break;
             case 2:
+                //【セット中】「完了ボタン」のカウントと全員押した時の動作
                 Debug.Log("AllSetPlayerCount");
                 object[] data2 = (object[])photonEvent.CustomData;
                 player_cnt[(int)data2[0]] = 1;
@@ -146,6 +128,12 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
                 break;
             case 3:
                 setPlayerCount(); //isFirstPlayer
+                break;
+            case 4:
+                //【バトル中】1回動かす
+                Dictionary<string, string>[] data4 = (Dictionary<string, string>[])photonEvent.CustomData;
+                MoveAction(data4[0]);
+                BATTLE_ACTION.Add(data4[0]);
                 break;
             default:
                 break;
