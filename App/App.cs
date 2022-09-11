@@ -119,4 +119,8 @@ public class App : MonoBehaviour
 
 //文字
 //str.Contains("にゃん")
+
+// Koma new_koma = KomaGenerator.instance.Spawn(after_koma.number);
+// Destroy(after_koma.transform.gameObject);
+// new_koma.transform.eulerAngles = new Vector3( 0f, 0f, 0f);
 }

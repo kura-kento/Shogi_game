@@ -21,13 +21,14 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
     //駒セット時の手順
     private List<Dictionary<string, string>> KOMA_SET_ACTION = new List<Dictionary<string, string>>{};
     // private List<Dictionary<string, string>> INIT_KOMA_SET;
-
+    bool isFirstPlayer;
     //バトル中の手順
     private List<Dictionary<string, string>> BATTLE_ACTION = new List<Dictionary<string, string>>{};
 
     // Start is called before the first frame update
     void Start()
     {
+        isFirstPlayer = PhotonMaster.GM.GetPlayerType() == PLAYER_TYPE.FIRST;
         Debug.Log("GameMaster:Start()");
         //【セット状態以外】
         // if(App.game_type != GAME_TYPE.SET) { 
@@ -231,10 +232,10 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
 
             //使ったら駒台の位置を並び替える。
             var koma_children = komadai_obj.GetComponentsInChildren<Koma>();
-            int i = 0;
+            int koma_i = 0;
             foreach(Koma koma_child in koma_children) {
-                koma_child.transform.localPosition = new Vector3(KomadaiVectorX(i), 0, 0);
-                i++;
+                koma_child.transform.localPosition = new Vector3(KomadaiVectorX(koma_i), 0, 0);
+                koma_i++;
             }
 
             masu_koma.transform.localPosition = new Vector3(0, 0, 0);
@@ -253,17 +254,14 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
             if(after_koma != null) {
                 after_koma.tag = "Komadai";
                 after_koma.number *= -1;//ステータスを自分のコマに
+                //TODO:成り駒を元に戻す。
                 
-                Koma new_koma = KomaGenerator.instance.Spawn(after_koma.number);
- 
-                Destroy(after_koma.transform.gameObject);
-                new_koma.transform.parent = komadai_obj.transform;
-                new_koma.transform.localPosition = new Vector3(0, 0, 0);
-                new_koma.transform.localScale = new Vector3(App.MASU_SIZE, App.MASU_SIZE, App.MASU_SIZE);
-                new_koma.ClickAction = Player.instance.SelectKoma;
+                after_koma.transform.parent = komadai_obj.transform;
+                after_koma.transform.Rotate(0f, 0f, 180f);
+                after_koma.transform.localPosition = new Vector3(0, 0, 0);
+                after_koma.transform.localScale = new Vector3(App.MASU_SIZE, App.MASU_SIZE, App.MASU_SIZE);
+                after_koma.ClickAction = Player.instance.SelectKoma;
                 
-                 
-                //使ったら駒台の位置を並び替える。
                 var koma_children = komadai_obj.GetComponentsInChildren<Koma>();
                 int i = 0;
                 foreach(Koma koma_child in koma_children) {
@@ -271,6 +269,8 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
                     i++;
                 }
             }
+            before_koma.number = Int32.Parse(moveAction["koma_num"]);
+            KomaGenerator.instance.TextChange(before_koma);//　成る時の名前
             Masu after_masu = masu_after_obj.GetComponent<Masu>();
             before_koma.transform.parent = after_masu.transform; //マスを親にする。
             before_koma.transform.localPosition = new Vector3(0, 0, 0);
