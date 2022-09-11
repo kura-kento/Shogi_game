@@ -1,7 +1,10 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Diagnostics;
+
+
 
 public class EditorRestartUnity
 {
@@ -13,3 +16,4 @@ public class EditorRestartUnity
         EditorApplication.Exit(0);
     }
 }
+#endif

@@ -18,7 +18,8 @@ public class Player : PlayerController
     int[] player_1 = new int[] { 1, 2, 3, 4, 5 };
     int[] player_2 = new int[] { -6, -4, -8, -7, -1 };
     
-
+    [SerializeField] public Camera Camera2;
+    [SerializeField] public GameObject Canvas2;
     private void Awake()
     {
         instance = this;
@@ -46,8 +47,23 @@ public class Player : PlayerController
         //     photonView.RPC(nameof(SetupPhoton), RpcTarget.All);
         // }
         // SetupPhoton();
-        SetupKomadai();
-        // GameMaster.MasuStatusLog();
+        SetupKomadai(); //【駒台生成】
+
+        // 【駒台を180度回転】
+        if(!isFirstPlayer) {
+            GameObject.Find("Shogiban").transform.Rotate(0f, 0f, 180f); 
+            GameObject komadai1 = GameObject.Find(App.KOMADAI1_NAME);
+            komadai1.transform.Rotate(0f, 0f, 180f);
+            komadai1.transform.localPosition = App.ReverseVector(komadai1.transform.localPosition);
+            GameObject.Find(App.KOMADAI1_NAME).transform.Rotate(0f, 0f, 180f);
+            GameObject komadai2 = GameObject.Find(App.KOMADAI2_NAME);
+            komadai2.transform.Rotate(0f, 0f, 180f);
+            komadai2.transform.localPosition = App.ReverseVector(komadai2.transform.localPosition);
+            GameObject.Find(App.KOMADAI1_NAME).transform.Rotate(0f, 0f, 180f);
+
+        }
+
+
     }
 
     // [PunRPC]

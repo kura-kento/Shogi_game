@@ -12,6 +12,7 @@ using UnityEngine.SceneManagement;
 public class MasuGenerator : MonoBehaviourPunCallbacks
 {
     [SerializeField] Masu masuPrefab;
+    // [SerializeField] Masu noEntryMasuPrefab;
 
     // どこからでも使えるようにする
     public static MasuGenerator instance;
@@ -55,7 +56,7 @@ public class MasuGenerator : MonoBehaviourPunCallbacks
             for(int j=0; j<int_x; j++) {
                 
                 Masu masu = Instantiate(masuPrefab);
-                masu.transform.parent = GameObject.Find("Shogiban").transform; //マスを親にする。
+                masu.transform.SetParent(GameObject.Find("Shogiban").transform, false); //マスを親にする。
                 float y = (App.MASU_SIZE * 2.5f) - (App.MASU_SIZE * i);//6枚
                 float x = (App.MASU_SIZE * 2.5f) - (App.MASU_SIZE * j);//6枚
                 masu.transform.localPosition = new Vector3(x * Masu.width, y *Masu.hight, 0);
@@ -75,6 +76,7 @@ public class MasuGenerator : MonoBehaviourPunCallbacks
                     Sprite image = Resources.Load<Sprite>("Images/NoEntryMasu");
                     masu.GetComponent<SpriteRenderer>().sprite = image;
                     masu.GetComponent<Renderer>().sortingLayerName = "front++"; 
+                    // masu.AddComponent<Outline>().sprite = image;
                 }
 
             }
@@ -84,7 +86,7 @@ public class MasuGenerator : MonoBehaviourPunCallbacks
             for(int j=0; j<int_x; j++) {      
                 Masu masu = Instantiate(masuPrefab);
                 // masu.transform.parent = GameObject.Find("Shogiban").transform; //マスを親にする。
-                masu.transform.parent = GameObject.Find("Shogiban").transform; //マスを親にする。
+                masu.transform.SetParent(GameObject.Find("Shogiban").transform, false); //マスを親にする。
                 float y = (App.MASU_SIZE * 2.5f) - (App.MASU_SIZE * (i+3));//6枚
                 float x = (App.MASU_SIZE * 2.5f) - (App.MASU_SIZE * j);//6枚
                 masu.transform.localPosition = new Vector3(x * Masu.width, y *Masu.hight, 0);
@@ -102,6 +104,10 @@ public class MasuGenerator : MonoBehaviourPunCallbacks
                     Sprite image = Resources.Load<Sprite>("Images/NoEntryMasu");
                     masu.GetComponent<SpriteRenderer>().sprite = image;
                     masu.GetComponent<Renderer>().sortingLayerName = "front++"; 
+                    var outline = masu.transform.gameObject.AddComponent<Outline>();
+                    // outline.useGraphicAlpha = false;
+                    outline.effectColor = new Color(1f, 0f, 0f, .8f);
+                    outline.effectDistance = new Vector2(3, 3);
                 }
 
             }
