@@ -36,17 +36,6 @@ public class Player : PlayerController
         isFirstPlayer = PhotonMaster.GM.GetPlayerType() == PLAYER_TYPE.FIRST;
         KOMADAI = isFirstPlayer ? App.KOMADAI1_NAME : App.KOMADAI2_NAME;
 
-        //後手のカメラ180度回転
-        // if (!isFirstPlayer) {
-        //     GameObject camera = GameObject.Find("Main Camera");
-        //     camera.transform.Rotate(0, 0, 180.0f);
-        // }
-        //
-        // photonView.RPC(nameof(SetupPhoton), RpcTarget.All);
-        // if (photonView.IsMine) {
-        //     photonView.RPC(nameof(SetupPhoton), RpcTarget.All);
-        // }
-        // SetupPhoton();
         SetupKomadai(); //【駒台生成】
 
         // 【駒台を180度回転】
@@ -60,56 +49,8 @@ public class Player : PlayerController
             komadai2.transform.Rotate(0f, 0f, 180f);
             komadai2.transform.localPosition = App.ReverseVector(komadai2.transform.localPosition);
             GameObject.Find(App.KOMADAI1_NAME).transform.Rotate(0f, 0f, 180f);
-
-        }
-
-
-    }
-
-    // [PunRPC]
-    // private void RpcSendMessage(string message) {
-    //     Debug.Log(message);
-    // }
-
-    // [PunRPC]
-    public void SetupPhoton() {
-        for(int i=0;i<5;i++) {
-            var obj = PhotonNetwork.Instantiate("Koma", new Vector3(0, 0, 0), Quaternion.identity, 0);
-            obj.AddComponent<Koma>();
-            Koma koma = obj.transform.gameObject.GetComponent<Koma>();
-            koma.number = isFirstPlayer ? player_1[i] : player_2[i];
-            Transform children = obj.GetComponentInChildren<Transform>();
-            koma.text = obj.transform.GetChild(0).gameObject.GetComponent<TMP_Text>();;
-            KomaGenerator.instance.TextChange(koma);
-            EventTrigger trigger = obj.GetComponent<EventTrigger>();
-            EventTrigger.Entry entry = new EventTrigger.Entry();
-            entry.eventID = EventTriggerType.PointerDown;
-            entry.callback.AddListener((data) => { 
-                    SelectKoma(koma);
-                });
-            trigger.triggers.Add(entry);
-
-            koma.transform.parent = GameObject.Find(KOMADAI).transform;
-            koma.tag = "Komadai";
-
-            koma.transform.localPosition = new Vector3((App.MASU_SIZE * 2.0f) - (App.MASU_SIZE * i), 0, 0);
-            koma.transform.localScale = new Vector3(App.MASU_SIZE, App.MASU_SIZE, App.MASU_SIZE);
-            if(!isFirstPlayer) { koma.transform.Rotate(0, 0, 180.0f); };
         }
     }
-
-//     void Update()
-//     {
-//         if (Input.GetMouseButtonDown(0)) {
-//             Debug.Log("クリックしたよ");
-//             photonView.RPC(nameof(RpcSendMessage), RpcTarget.All, "こんにちは");
-//         }
-//     }
-
-//    [PunRPC]
-//     private void RpcSendMessage(string message) {
-//         Debug.Log(message);
-//     }
 
     //初期配置
     public void SetupKomadai()

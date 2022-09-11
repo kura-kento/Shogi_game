@@ -12,7 +12,6 @@ using UnityEngine.SceneManagement;
 public class MasuGenerator : MonoBehaviourPunCallbacks
 {
     [SerializeField] Masu masuPrefab;
-    // [SerializeField] Masu noEntryMasuPrefab;
 
     // どこからでも使えるようにする
     public static MasuGenerator instance;
@@ -78,7 +77,6 @@ public class MasuGenerator : MonoBehaviourPunCallbacks
                     masu.GetComponent<Renderer>().sortingLayerName = "front++"; 
                     // masu.AddComponent<Outline>().sprite = image;
                 }
-
             }
         }
 

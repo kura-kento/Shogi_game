@@ -220,17 +220,16 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
         // 【共通】盤上,駒台
         string masu_after = "Masu" + moveAction["after"];
         Masu masu = GameObject.Find(masu_after).GetComponent<Masu>();
-            Debug.Log("マス:" + masu.ToString());
+        Debug.Log("マス:" + masu.ToString());
+        GameObject komadai_obj = GameObject.Find(Int32.Parse(moveAction["koma_num"]) > 0 ? App.KOMADAI1_NAME : App.KOMADAI2_NAME);
         //　駒台から
         if(moveAction["before"].Contains("Komadai")) {
-            GameObject komadai_obj = GameObject.Find(Int32.Parse(moveAction["koma_num"]) > 0 ? App.KOMADAI1_NAME : App.KOMADAI2_NAME);
             Koma masu_koma = App.GetChildKoma(obj: komadai_obj, koma_name: moveAction["koma_num"]);
 
             //駒台 => 盤上
             masu_koma.transform.parent = masu.transform; //マスを親にする。
 
-
-            // //使ったら駒台の位置を並び替える。
+            //使ったら駒台の位置を並び替える。
             var koma_children = komadai_obj.GetComponentsInChildren<Koma>();
             int i = 0;
             foreach(Koma koma_child in koma_children) {
@@ -238,19 +237,41 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
                 i++;
             }
 
-
             masu_koma.transform.localPosition = new Vector3(0, 0, 0);
         // 盤上
         } else {
             var masu_before = "Masu" + moveAction["before"];
 
+            //【移動前】
             GameObject masu_before_obj = GameObject.Find(masu_before);
             Koma before_koma = App.GetChildKoma(obj: masu_before_obj, koma_name: moveAction["koma_num"]);
-
+            //【移動後】
             GameObject masu_after_obj = GameObject.Find(masu_after);
-            Masu after_masu = masu_after_obj.GetComponent<Masu>();
-            // Koma after_koma = App.GetChildKoma(obj: masu_after_obj, koma_name: moveAction["koma_num"]);
+            Koma after_koma = App.GetChildKoma(obj: masu_after_obj, koma_name: null);
 
+            // 【駒を取得】
+            if(after_koma != null) {
+                after_koma.tag = "Komadai";
+                after_koma.number *= -1;//ステータスを自分のコマに
+                
+                Koma new_koma = KomaGenerator.instance.Spawn(after_koma.number);
+ 
+                Destroy(after_koma.transform.gameObject);
+                new_koma.transform.parent = komadai_obj.transform;
+                new_koma.transform.localPosition = new Vector3(0, 0, 0);
+                new_koma.transform.localScale = new Vector3(App.MASU_SIZE, App.MASU_SIZE, App.MASU_SIZE);
+                new_koma.ClickAction = Player.instance.SelectKoma;
+                
+                 
+                //使ったら駒台の位置を並び替える。
+                var koma_children = komadai_obj.GetComponentsInChildren<Koma>();
+                int i = 0;
+                foreach(Koma koma_child in koma_children) {
+                    koma_child.transform.localPosition = new Vector3(KomadaiVectorX(i), 0, 0);
+                    i++;
+                }
+            }
+            Masu after_masu = masu_after_obj.GetComponent<Masu>();
             before_koma.transform.parent = after_masu.transform; //マスを親にする。
             before_koma.transform.localPosition = new Vector3(0, 0, 0);
         }
