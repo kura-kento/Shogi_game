@@ -296,4 +296,11 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
         App.Turn++; //ターン数増やす
         App.turnUp();
     }
+
+// 投了ボタン===========================
+    // スタート時に呼ばれる
+    // void Start () {
+
+    //     // myProcess.ExeMyProcess();
+    // }
 }
