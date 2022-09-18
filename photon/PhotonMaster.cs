@@ -28,7 +28,7 @@ public class PhotonMaster : MonoBehaviourPunCallbacks
     }
 
     //これをボタンにつける
-    public void FindOponent()
+    public static void FindOponent()
     {
         if (PhotonNetwork.IsConnected)
         {

@@ -173,14 +173,6 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
     {
         return this.player_type;
     }
-
-    //マスのステータス(ログ)
-    // public static void MasuStatusLog() {
-    //     for(int i=0; i<App.MAX_Y;i++)
-    //     {
-    //         string[] intArray = Array.ConvertAll(App.masu_array[App.MAX_Y-i-1], s => {return s.ToString();});
-    //     }
-    // }
  
     //全てのマスの選択をキャンセルする
     public static void ResetMasu() {

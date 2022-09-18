@@ -8,17 +8,13 @@ public class Prefs : MonoBehaviour {
 
     void Start ()
     {
-        //プロフィール画像ロック
-        PlayerPrefs.SetInt ("Image1", 0);
-        PlayerPrefs.SetInt ("Image2", 0);
-        PlayerPrefs.SetInt ("Image3", 0);
-        PlayerPrefs.SetInt ("Image4", 0);
-        PlayerPrefs.SetInt ("Image5", 0);
-        //名前
-        PlayerPrefs.GetString("Name", " SIYA");
-        //勝利数
-        PlayerPrefs.SetInt ("win", 0);
-        PlayerPrefs.Save ();
+    //     //プロフィール画像
+    //     PlayerPrefs.SetInt ("image_id", 1);
+    //     //名前
+    //     PlayerPrefs.SetString("player_name", "PLAYER NAME");
+    //     //勝利数
+    //     PlayerPrefs.SetInt ("win", 0);
+    //     PlayerPrefs.Save ();
     }
 
     void OnDestroy() {
