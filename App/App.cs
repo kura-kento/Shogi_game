@@ -33,6 +33,7 @@ public class App : MonoBehaviour
     public static int MAX_X = 4;//固定値
    
     public static float MASU_SIZE = 275f;//固定値
+    public static float KOMA_SIZE = 220f;//固定値
     public static string KOMADAI1_NAME = "Komadai1";//固定値
     public static string KOMADAI2_NAME = "Komadai2";//固定値
 

@@ -38,7 +38,7 @@ public class Player : PlayerController
 
         SetupKomadai(); //【駒台生成】
 
-        // 【駒台を180度回転】
+        // 【駒台を180度回転】【プロフィール位置変更】
         if(!isFirstPlayer) {
             GameObject.Find("Shogiban").transform.Rotate(0f, 0f, 180f); 
             GameObject komadai1 = GameObject.Find(App.KOMADAI1_NAME);
@@ -49,6 +49,11 @@ public class Player : PlayerController
             komadai2.transform.Rotate(0f, 0f, 180f);
             komadai2.transform.localPosition = App.ReverseVector(komadai2.transform.localPosition);
             GameObject.Find(App.KOMADAI1_NAME).transform.Rotate(0f, 0f, 180f);
+
+            GameObject profile1 = GameObject.Find("Profile1");
+            profile1.transform.localPosition = App.ReverseVector(profile1.transform.localPosition);
+            GameObject profile2 = GameObject.Find("Profile2");
+            profile2.transform.localPosition = App.ReverseVector(profile2.transform.localPosition);
         }
     }
 
@@ -61,8 +66,8 @@ public class Player : PlayerController
             Koma Koma = KomaGenerator.instance.Spawn(player_1[i]);
             Koma.transform.parent = GameObject.Find(App.KOMADAI1_NAME).transform;
             Koma.tag = "Komadai";
-            Koma.transform.localPosition = new Vector3((App.MASU_SIZE * 2.0f) - (App.MASU_SIZE * i), 0, 0);
-            Koma.transform.localScale = new Vector3(App.MASU_SIZE, App.MASU_SIZE, App.MASU_SIZE);
+            Koma.transform.localPosition = new Vector3((App.KOMA_SIZE * 2.0f) - (App.KOMA_SIZE * i), 0, 0);
+            Koma.transform.localScale = new Vector3(App.KOMA_SIZE, App.KOMA_SIZE, App.KOMA_SIZE);
             Koma.ClickAction = isFirstPlayer ? SelectKoma : NotSelectKoma; //クリックされた時関数を呼ぶ
         }
 
@@ -71,8 +76,8 @@ public class Player : PlayerController
             Koma Koma = KomaGenerator.instance.Spawn(player_2[i]);
             Koma.transform.parent = GameObject.Find(App.KOMADAI2_NAME).transform;
             Koma.tag = "Komadai";
-            Koma.transform.localPosition = new Vector3(-(App.MASU_SIZE * 2.0f) + (App.MASU_SIZE * i), 0, 0);
-            Koma.transform.localScale = new Vector3(App.MASU_SIZE, App.MASU_SIZE, App.MASU_SIZE);
+            Koma.transform.localPosition = new Vector3(-(App.KOMA_SIZE * 2.0f) + (App.KOMA_SIZE * i), 0, 0);
+            Koma.transform.localScale = new Vector3(App.KOMA_SIZE, App.KOMA_SIZE, App.KOMA_SIZE);
             Koma.ClickAction = !isFirstPlayer ? SelectKoma : NotSelectKoma; //クリックされた時関数を呼ぶ
             Koma.transform.Rotate(0, 0, 180.0f);
         }

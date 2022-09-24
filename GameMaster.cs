@@ -28,6 +28,7 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
     // Start is called before the first frame update
     void Start()
     {
+        AllSetProfile(); //一度だけ呼ぶ様にする。
         isFirstPlayer = PhotonMaster.GM.GetPlayerType() == PLAYER_TYPE.FIRST;
         Debug.Log("GameMaster:Start()");
         //【セット状態以外】
@@ -72,6 +73,23 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
         PhotonNetwork.RemoveCallbackTarget(this);
     }
 
+    public void AllSetProfile()
+    {
+        Debug.Log("全体:プロフィール画像挿入");
+        //【プロフィール画像】
+        int image_id = PlayerPrefs.GetInt ("image_id");
+        SqliteDatabase sqlDB = new SqliteDatabase("config.db");
+        string selectQuery = "select * from images where id = " + image_id.ToString();
+        DataTable dataTable = sqlDB.ExecuteQuery(selectQuery);
+        //【名前】
+        string player_name = PlayerPrefs.GetString("player_name");
+
+        // 先手後手,画像名,名前
+        object[] content = new object[] { PhotonMaster.GM.GetPlayerType() == PLAYER_TYPE.FIRST ? "1" : "2", dataTable.Rows[0]["image_name"], player_name};
+
+        PhotonNetwork.RaiseEvent(1, content, raiseEventOptions, SendOptions.SendReliable);
+    }
+
     public void AllSetAction()
     {
         Debug.Log("AllEvent");
@@ -82,7 +100,7 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
                      content[content.Length - 1] = SET_ACTION;
         }
 
-        PhotonNetwork.RaiseEvent(1, content, raiseEventOptions, SendOptions.SendReliable);
+        PhotonNetwork.RaiseEvent(2, content, raiseEventOptions, SendOptions.SendReliable);
         AllSetPlayerCount();
     }
 
@@ -90,7 +108,7 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
     {
         object[] content = new object[] { PhotonMaster.GM.GetPlayerType() == PLAYER_TYPE.FIRST ? 0 : 1 };
 
-        PhotonNetwork.RaiseEvent(2, content, raiseEventOptions, SendOptions.SendReliable);
+        PhotonNetwork.RaiseEvent(3, content, raiseEventOptions, SendOptions.SendReliable);
     }
 
     //【バトル中】
@@ -114,20 +132,25 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
         switch( eventCode )
         {
             case 1:
+                object[] data1 = (object[])photonEvent.CustomData;
+                //【初期配置】自分と相手のプロフィールを同期する。
+                GameObject ProfileImage = GameObject.Find("ProfileImage" + data1[0]);
+                Debug.Log("ProfileImage" + data1[0] + "Images/ProfileImage/" + data1[1]);
+                ProfileImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("Images/ProfileImage/" + data1[1]);
+                // GameObject.Find("PlayerName").GetComponent<Text>().text = player_name;
+                break;
+            case 2:
                 //【セット中】自分のセットした配置を変数に追加する
-                Dictionary<string, string>[] datas1 = (Dictionary<string, string>[])photonEvent.CustomData;
-                foreach(Dictionary<string, string> data in datas1) {
+                Dictionary<string, string>[] datas2 = (Dictionary<string, string>[])photonEvent.CustomData;
+                foreach(Dictionary<string, string> data in datas2) {
                     App.SET_ACTION.Add(data);
                 }
                 break;
-            case 2:
+            case 3:
                 //【セット中】「完了ボタン」のカウントと全員押した時の動作
                 Debug.Log("AllSetPlayerCount");
-                object[] data2 = (object[])photonEvent.CustomData;
-                player_cnt[(int)data2[0]] = 1;
-                setPlayerCount(); //isFirstPlayer
-                break;
-            case 3:
+                object[] data3 = (object[])photonEvent.CustomData;
+                player_cnt[(int)data3[0]] = 1;
                 setPlayerCount(); //isFirstPlayer
                 break;
             case 4:
@@ -194,7 +217,6 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
 
     //手順　引数手順:[41金,42金] {koma_num: 6, before:[4,1] , after[4,2]} 42打金 {koma_num: 6, before: null, after:[4,2]} 
     public void MoveList(List<Dictionary<string, string>> list) {     
-         
         //初期配置からローカルで動かして盤面を配置する。
         var i=1;
         foreach(var moveAction in list) {
@@ -251,7 +273,7 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
                 after_koma.transform.parent = komadai_obj.transform;
                 after_koma.transform.Rotate(0f, 0f, 180f);
                 after_koma.transform.localPosition = new Vector3(0, 0, 0);
-                after_koma.transform.localScale = new Vector3(App.MASU_SIZE, App.MASU_SIZE, App.MASU_SIZE);
+                after_koma.transform.localScale = new Vector3(App.KOMA_SIZE, App.KOMA_SIZE, App.KOMA_SIZE);
                 after_koma.ClickAction = Player.instance.SelectKoma;
                 
                 var koma_children = komadai_obj.GetComponentsInChildren<Koma>();
@@ -273,13 +295,14 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
         //「BATTLE」の時
         if(App.game_type == GAME_TYPE.BATTLE) {
             // TODO:ここに勝利判定を入れる
+            
             //駒を動かす
             TurnEnd();//ダーン終了の処理    
         }
     }
     //駒台の座標
     public float KomadaiVectorX(int i) {
-        return App.isTurePlayer1 ? (App.MASU_SIZE * 2.0f) - (App.MASU_SIZE * i) : -(App.MASU_SIZE * 2.0f) + (App.MASU_SIZE * i) * i;
+        return App.isTurePlayer1 ? (App.KOMA_SIZE * 2.0f) - (App.KOMA_SIZE * i) : -(App.KOMA_SIZE * 2.0f) + (App.KOMA_SIZE * i) * i;
     }
 
     //ダーン終了の処理

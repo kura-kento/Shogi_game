@@ -151,7 +151,7 @@ public class MasuGenerator : MonoBehaviourPunCallbacks
                 
                 //動きデータを入れる
                 MoveList(App.slot.number.ToString(), App.slot.transform.parent.name.Replace("Masu",""), masu.name.Replace("Masu",""));
- 
+
                 App.slot = null;
             }
         } 
@@ -189,7 +189,7 @@ public class MasuGenerator : MonoBehaviourPunCallbacks
 
     //駒台の座標
     public float KomadaiVectorX(int i) {
-        return App.isTurePlayer1 ? (App.MASU_SIZE * 2.0f) - (App.MASU_SIZE * i) : -(App.MASU_SIZE * 2.0f) + (App.MASU_SIZE * i) * i;
+        return App.isTurePlayer1 ? (App.KOMA_SIZE * 2.0f) - (App.KOMA_SIZE * i) : -(App.KOMA_SIZE * 2.0f) + (App.KOMA_SIZE * i) * i;
     }
 
     //ダイアログが押されるまで待つ
