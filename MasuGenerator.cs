@@ -138,9 +138,9 @@ public class MasuGenerator : MonoBehaviourPunCallbacks
                     if(((masu.MasuStatus * App.slot.number) < 0 || (parent.GetComponent<Masu>().MasuStatus * App.slot.number) < 0) && Array.IndexOf(evolutionBefore, Mathf.Abs(App.slot.number)) >= 0 ) {
                         // 駒を成りますか？
                         // MyDialog.Confirm("駒を成りますか？", Click_OK, Click_Cancel);
-                        AnimatedDialog.instance.Open();
+                        EvoltDialog.instance.Open();
                         await TestUniTask();
-                        if (AnimatedDialog.IsEvolt) {
+                        if (EvoltDialog.IsEvolt) {
                             //TODO:不具合 インスタンスがない
                             App.slot.number = (App.slot.number > 0 ? 1 : -1) * (9 + Array.IndexOf(evolutionBefore, Mathf.Abs(App.slot.number)));
                             // KomaGenerator.instance.TextChange(App.slot);
@@ -171,22 +171,6 @@ public class MasuGenerator : MonoBehaviourPunCallbacks
         }
     }
 
-    public void Win() {
-        //勝ち判定
-        Debug.Log("かち");
-    }
-
-    public bool isEnemyZero() {
-        int komaCount = 0;
-        foreach (Koma koma in FindObjectsOfType<Koma>()) {
-            Debug.Log(koma.number);
-            if(koma.number > 0) {
-                komaCount++;
-            }
-        }
-        return (komaCount >= 9);
-    }
-
     //駒台の座標
     public float KomadaiVectorX(int i) {
         return App.isTurePlayer1 ? (App.KOMA_SIZE * 2.0f) - (App.KOMA_SIZE * i) : -(App.KOMA_SIZE * 2.0f) + (App.KOMA_SIZE * i) * i;
@@ -196,7 +180,7 @@ public class MasuGenerator : MonoBehaviourPunCallbacks
     async UniTask TestUniTask()  
     {
         //ダイアログが閉じるまで処理を止める
-        await UniTask.WaitUntil(() => AnimatedDialog.IsClose);
+        await UniTask.WaitUntil(() => EvoltDialog.IsClose);
     }
 
 }

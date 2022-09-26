@@ -1,8 +1,9 @@
 using DG.Tweening;  
 using UnityEngine;  
-using UnityEngine.EventSystems;  
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
-public class CustomButton : MonoBehaviour,  
+public class TopPageButton : MonoBehaviour,  
     IPointerClickHandler,  
     IPointerDownHandler,  
     IPointerUpHandler  
@@ -13,7 +14,7 @@ public class CustomButton : MonoBehaviour,
 
     public void OnPointerClick(PointerEventData eventData)  
     {
-        Debug.Log("処理実行");
+        SceneManager.LoadScene("TopScene");
         onClickCallback?.Invoke();
     }
 

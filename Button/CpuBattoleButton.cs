@@ -14,7 +14,7 @@ public class CpuBattoleButton : MonoBehaviour,
 
     public void OnPointerClick(PointerEventData eventData)  
     {
-        PlayerPrefs.SetInt ("image_id", 2);
+        PlayerPrefs.SetInt ("image_id", 1);
         SceneManager.LoadScene (SceneManager.GetActiveScene().name);
         Debug.Log("処理実行");
         onClickCallback?.Invoke();  

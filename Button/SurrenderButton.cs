@@ -10,10 +10,18 @@ public class SurrenderButton : MonoBehaviour,
     public System.Action onClickCallback;  
 
     [SerializeField] private CanvasGroup _canvasGroup;  
+    //爆破エフェクト
+    [SerializeField] private GameObject explosionPrefab;
 
     public void OnPointerClick(PointerEventData eventData)  
     {
         Debug.Log("SurrenderButton");
+        GameObject gameobject = GameObject.Find("Profile1");
+        Instantiate (explosionPrefab, gameobject.transform.position, Quaternion.identity);
+        Destroy(gameobject);
+        //勝ち判定
+        ResultDialog.instance.Open();
+        Debug.Log("かち");
         onClickCallback?.Invoke();  
     }
 

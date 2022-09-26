@@ -25,6 +25,9 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
     //バトル中の手順
     private List<Dictionary<string, string>> BATTLE_ACTION = new List<Dictionary<string, string>>{};
 
+    //爆破エフェクト
+    [SerializeField] private GameObject explosionPrefab;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,7 +47,7 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
             // MoveAction(test);
         }
 
-        if(App.game_type == GAME_TYPE.BATTLE){
+        if(App.game_type == GAME_TYPE.BATTLE) {
             DontDestroyOnLoad(gameObject);
         };       
     }
@@ -96,8 +99,8 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
         Dictionary<string, string>[] content = new Dictionary<string, string>[] {};
         // ictionary<string, string>[] content2 = content.Append();
         foreach(Dictionary<string, string> SET_ACTION in KOMA_SET_ACTION) {
-                    Array.Resize(ref content, content.Length + 1);
-                     content[content.Length - 1] = SET_ACTION;
+            Array.Resize(ref content, content.Length + 1);
+            content[content.Length - 1] = SET_ACTION;
         }
 
         PhotonNetwork.RaiseEvent(2, content, raiseEventOptions, SendOptions.SendReliable);
@@ -121,7 +124,7 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
     }
 
     public void OnEvent(EventData photonEvent)
-    {   
+    {
         Debug.Log("photonEvent.CustomData");
         Debug.Log(photonEvent.CustomData);
 
@@ -196,7 +199,7 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
     {
         return this.player_type;
     }
- 
+
     //全てのマスの選択をキャンセルする
     public static void ResetMasu() {
         foreach (Masu masu in FindObjectsOfType<Masu>())
@@ -266,6 +269,11 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
 
             // 【駒を取得】
             if(after_koma != null) {
+                //【勝利判定】「玉」を取る
+                if(Mathf.Abs(after_koma.number) == 1) {
+                    Win();
+                }
+
                 after_koma.tag = "Komadai";
                 after_koma.number *= -1;//ステータスを自分のコマに
                 //TODO:成り駒を元に戻す。
@@ -295,7 +303,8 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
         //「BATTLE」の時
         if(App.game_type == GAME_TYPE.BATTLE) {
             // TODO:ここに勝利判定を入れる
-            
+            if(isEnemyZero() == true){ Win();}
+
             //駒を動かす
             TurnEnd();//ダーン終了の処理    
         }
@@ -311,6 +320,30 @@ public class GameMaster : MonoBehaviour, IOnEventCallback
         App.Turn++; //ターン数増やす
         App.turnUp();
     }
+
+        public void Win() {
+        //【爆破】
+        // App.DestroyAndResult(isPlayerFirst: true);
+        GameObject gameobject = GameObject.Find("Profile1");
+        Instantiate (explosionPrefab, gameobject.transform.position, Quaternion.identity);
+        Destroy(gameobject);
+        //勝ち判定
+        ResultDialog.instance.Open();
+        Debug.Log("かち");
+    }
+
+    //【勝ち判定】全駒
+    public bool isEnemyZero() {
+        int komaCount = 0;
+        foreach (Koma koma in FindObjectsOfType<Koma>()) {
+            Debug.Log(koma.number);
+            if(koma.number > 0) {
+                komaCount++;
+            }
+        }
+        return (komaCount >= 9);
+    }
+
 
 // 投了ボタン===========================
     // スタート時に呼ばれる

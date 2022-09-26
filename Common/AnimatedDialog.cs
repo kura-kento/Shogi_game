@@ -22,23 +22,7 @@ public class AnimatedDialog : MonoBehaviour
 
     // アニメーション中かどうか
     public bool IsTransition { get; private set; }
-
-    //インスタンス化
-    public static AnimatedDialog instance;
-    public static bool IsClose;
-    public static bool IsEvolt; //駒を成るか？
     
-    private void Awake()
-    {
-        instance = this;
-    }
-
-    void Start()
-    {
-        gameObject.SetActive(false);
-        // Close();
-    }
-
     // ダイアログを開く
     public void Open()
     {
@@ -46,7 +30,6 @@ public class AnimatedDialog : MonoBehaviour
         // 不正操作防止
         if (IsOpen || IsTransition) return;
         Debug.Log("ダイアログを開く");
-        IsClose = false;
         // パネル自体をアクティブにする
         gameObject.SetActive(true);
 
@@ -56,19 +39,6 @@ public class AnimatedDialog : MonoBehaviour
         // アニメーション待機
         StartCoroutine(WaitAnimation("Open Dialog"));
     }    
-
-    public void Evolt() {
-        IsEvolt = true;
-        IsClose = true;
-        Debug.Log("ダイアログ:OK");
-        Close();
-    }
-
-    public void NoEvolt() {
-        IsEvolt = false;
-        IsClose = true;
-        Close();
-    }
     
     // ダイアログを閉じる
     public void Close()

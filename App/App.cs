@@ -21,7 +21,6 @@ public enum PLAYER_TYPE
     FIRST,   // 先手
     SECOND,  // 後手
 }
- 
 
 public class App : MonoBehaviour
 {
@@ -31,7 +30,7 @@ public class App : MonoBehaviour
 
     public static int MAX_Y = 4;//固定値
     public static int MAX_X = 4;//固定値
-   
+
     public static float MASU_SIZE = 275f;//固定値
     public static float KOMA_SIZE = 220f;//固定値
     public static string KOMADAI1_NAME = "Komadai1";//固定値
@@ -43,11 +42,13 @@ public class App : MonoBehaviour
     
     // int int_x = 4;
     [SerializeField] private GameObject TurnText;
+
     public static GameObject TurnObject;
 
     public static Koma slot = null;
     public static bool isTurePlayer1 = true;
     public static int Turn = 1;
+    
 
     void Awake() {
         TurnObject = TurnText;
@@ -106,8 +107,14 @@ public class App : MonoBehaviour
         return new Vector3(-(vector3.x), -(vector3.y), vector3.z);
     }
 
-    
-  
+    //【爆破】
+    // public static void DestroyAndResult(bool isPlayerFirst) {
+    //     GameObject gameobject = GameObject.Find("Profile" + (isPlayerFirst ? "1" : "2"));
+    //     Instantiate (explosionPrefab, gameobject.transform.position, Quaternion.identity);
+    //     Destroy(gameobject);
+    //     //勝ち判定
+    //     ResultDialog.instance.Open();
+    // }
 
 //色を変える
 //obj.GetComponent<SpriteRenderer>().color = App.MASU_COLOR;
